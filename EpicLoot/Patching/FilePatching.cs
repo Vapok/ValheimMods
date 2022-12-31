@@ -17,6 +17,7 @@ namespace EpicLoot.Patching
         Overwrite,      // Replace the selected token's value with the provided value
         Remove,         // Remove the selected token from the array or object
         Append,         // Append the provided value to the end of the selected array
+        AppendAll,      // Append the provided array to the end of the selected array.
         InsertBefore,   // Insert the provided value into the array containing the selected token, before the token
         InsertAfter,    // Insert the provided value into the array containing the selected token, after the token
         RemoveAll,      // Remove all elements of an array or all properties of an object
@@ -331,7 +332,7 @@ namespace EpicLoot.Patching
             token.Remove();
         }
 
-        public static void ApplyPatch_Append(JToken token, Patch patch)
+        public static void ApplyPatch_Append(JToken token, Patch patch, bool appendAll = false)
         {
             if (patch.Value == null)
             {
@@ -341,11 +342,24 @@ namespace EpicLoot.Patching
 
             if (token.Type == JTokenType.Array)
             {
-                ((JArray)token).Add(patch.Value);
+                if (appendAll)
+                {
+                    var mergeSettings = new JsonMergeSettings
+                    {
+                        MergeArrayHandling = MergeArrayHandling.Concat,
+                        MergeNullValueHandling = MergeNullValueHandling.Ignore
+                    };
+                    ((JArray)token).Merge(patch.Value,mergeSettings);
+                } else
+                {
+                    ((JArray)token).Add(patch.Value);
+                }
+                
             }
             else
             {
-                EpicLoot.LogErrorForce($"Patch ({patch.SourceFile}, {patch.Path}) has action 'Append' but has selected a token in the target file that is not a json Array!");
+                var actionName = appendAll ? "AppendAll" : "Append";
+                EpicLoot.LogErrorForce($"Patch ({patch.SourceFile}, {patch.Path}) has action {actionName} but has selected a token in the target file that is not a json Array!");
             }
         }
 
