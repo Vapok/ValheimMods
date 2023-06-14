@@ -11,6 +11,7 @@ namespace EpicLoot_UnityLib
     {
         public MultiSelectItemList SacrificeProducts;
         public EnchantBonus BonusPanel;
+
         public delegate List<InventoryItemListElement> GetSacrificeItemsDelegate();
         public delegate List<InventoryItemListElement> GetSacrificeProductsDelegate(List<Tuple<ItemDrop.ItemData, int>> items);
 
@@ -23,6 +24,7 @@ namespace EpicLoot_UnityLib
             var items = GetSacrificeItems();
             AvailableItems.SetItems(items.Cast<IListElement>().ToList());
             AvailableItems.DeselectAll();
+            var random = new System.Random();
         }
 
         protected override void DoMainAction()
@@ -53,28 +55,7 @@ namespace EpicLoot_UnityLib
                 inventory.RemoveItem(selectedItem.Item1.GetItem(), selectedItem.Item2);
             }
 
-            foreach (var sacrificeProduct in sacrificeProducts)
-            {
-                var item = sacrificeProduct.GetItem();
-                do
-                {
-                    var itemToAdd = item.Clone();
-                    itemToAdd.m_stack = Mathf.Min(item.m_stack, item.m_shared.m_maxStackSize);
-                    item.m_stack -= itemToAdd.m_stack;
-                    Debug.LogWarning($"Adding item: {itemToAdd.m_shared.m_name} x{itemToAdd.m_stack} (remaining:{item.m_stack})");
-                    if (inventory.CanAddItem(itemToAdd))
-                    {
-                        inventory.AddItem(itemToAdd);
-                        player.Message(MessageHud.MessageType.TopLeft, $"$msg_added {itemToAdd.m_shared.m_name}", itemToAdd.m_stack, itemToAdd.GetIcon());
-                    }
-                    else
-                    {
-                        var itemDrop = ItemDrop.DropItem(itemToAdd, itemToAdd.m_stack, player.transform.position + player.transform.forward + player.transform.up, player.transform.rotation);
-                        itemDrop.GetComponent<Rigidbody>().velocity = Vector3.up * 5f;
-                        player.Message(MessageHud.MessageType.TopLeft, $"$msg_dropped {itemDrop.m_itemData.m_shared.m_name} $mod_epicloot_sacrifice_inventoryfullexplanation", itemDrop.m_itemData.m_stack, itemDrop.m_itemData.GetIcon());
-                    }
-                } while (item.m_stack > 0);
-            }
+            GiveItemsToPlayer(sacrificeProducts);
 
             RefreshAvailableItems();
             AvailableItems.GiveFocus(true, 0);
