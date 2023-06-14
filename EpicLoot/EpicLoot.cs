@@ -16,6 +16,7 @@ using EpicLoot.GatedItemType;
 using EpicLoot.LegendarySystem;
 using EpicLoot.MagicItemEffects;
 using EpicLoot.Patching;
+using EpicLoot_UnityLib;
 using HarmonyLib;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -128,7 +129,9 @@ namespace EpicLoot
         public static ConfigEntry<float> ItemsToMaterialsDropRatio;
         public static ConfigEntry<bool> AlwaysShowWelcomeMessage;
         public static ConfigEntry<bool> OutputPatchedConfigFiles;
-
+        public static ConfigEntry<bool> EnchantingTableUpgradesActive;
+        public static ConfigEntry<EnchantingTabs> EnchantingTableActivatedTabs;
+        
         public static Dictionary<string, CustomSyncedValue<string>> SyncedJsonFiles = new Dictionary<string, CustomSyncedValue<string>>();
         public static Dictionary<string, ConfigValue<string>> NonSyncedJsonFiles = new Dictionary<string, ConfigValue<string>>();
 
@@ -227,6 +230,11 @@ namespace EpicLoot
             AbilityBarLayoutAlignment = Config.Bind("Abilities", "Ability Bar Layout Alignment", TextAnchor.LowerLeft, "The Ability Bar is a Horizontal Layout Group. This value indicates how the elements inside are aligned. Choices with 'Center' in them will keep the items centered on the bar, even if there are fewer than the maximum allowed. 'Left' will be left aligned, and similar for 'Right'.");
             AbilityBarIconSpacing = Config.Bind("Abilities", "Ability Bar Icon Spacing", 8.0f, "The number of units between the icons on the ability bar.");
 
+            //Enchanting Table
+            EnchantingTableUpgradesActive = SyncedConfig("Enchanting Table", "Upgrades Active", true, "Toggles Enchanting Table Upgrade Capabilities. If false, enchanting table features will be unlocked set to Level 1");
+            EnchantingTableActivatedTabs = SyncedConfig("Enchanting Table", $"Features Active", EnchantingTabs.Sacrifice | EnchantingTabs.Augment, $"Toggles Enchanting Table Feature on and off completely.");
+            
+            
             _configSync.AddLockingConfigEntry(_serverConfigLocked);
 
             var assembly = Assembly.GetExecutingAssembly();
@@ -234,8 +242,12 @@ namespace EpicLoot
             
             EIDFLegacy.CheckForExtendedItemFrameworkLoaded(_instance);
 
+            LoadEmbeddedAssembly(assembly, "Newtonsoft.Json.dll");
             LoadEmbeddedAssembly(assembly, "EpicLoot-UnityLib.dll");
-            
+
+            EnchantingTableUpgradesActive.SettingChanged += (_, _) => EnchantingTableUI.UpdateUpgradeActivation();
+            EnchantingTableActivatedTabs.SettingChanged += (_, _) => EnchantingTableUI.UpdateTabActivation();
+
             LoadPatches();
             InitializeConfig();
             InitializeAbilities();
@@ -452,6 +464,7 @@ namespace EpicLoot
             LoadJsonFile<LegendaryItemConfig>("legendaries.json", UniqueLegendaryHelper.Initialize, ConfigType.Synced);
             LoadJsonFile<AbilityConfig>("abilities.json", AbilityDefinitions.Initialize, ConfigType.Synced);
             LoadJsonFile<MaterialConversionsConfig>("materialconversions.json", MaterialConversions.Initialize, ConfigType.Synced);
+            LoadJsonFile<EnchantingUpgradesConfig>("enchantingupgrades.json", EnchantingTableUpgrades.InitializeConfig, ConfigType.Synced);
 
             WatchNewPatchConfig();
         }
@@ -1172,6 +1185,8 @@ namespace EpicLoot
 
         private static bool IsNotRestrictedItem(ItemDrop.ItemData item)
         {
+            if (item.m_dropPrefab != null && LootRoller.Config.RestrictedItems.Contains(item.m_dropPrefab.name))
+                return false;
             return !LootRoller.Config.RestrictedItems.Contains(item.m_shared.m_name);
         }
 
@@ -1520,7 +1535,7 @@ namespace EpicLoot
 
         private static string GetMagicEffectCountTableLine(ItemRarity rarity)
         {
-            var effectCounts = LootRoller.GetEffectCountsPerRarity(rarity);
+            var effectCounts = LootRoller.GetEffectCountsPerRarity(rarity, false);
             float total = effectCounts.Sum(x => x.Value);
             var result = $"|{rarity}|";
             for (var i = 1; i <= 6; ++i)
