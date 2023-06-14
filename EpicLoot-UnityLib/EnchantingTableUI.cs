@@ -17,6 +17,8 @@ namespace EpicLoot_UnityLib
         public AudioSource Audio;
         public AudioClip TabClickSFX;
 
+        public EnchantingTable SourceTable { get; private set; }
+
         public static EnchantingTableUI instance { get; set; }
 
         public delegate void AugaFixupDelegate(EnchantingTableUI ui);
@@ -42,7 +44,7 @@ namespace EpicLoot_UnityLib
             AugaFixup(this);
         }
 
-        public static void Show(GameObject enchantingUiPrefab)
+        public static void Show(GameObject enchantingUiPrefab, EnchantingTable source)
         {
             if (instance == null)
             {
@@ -57,6 +59,8 @@ namespace EpicLoot_UnityLib
 
             if (instance == null)
                 return;
+
+            instance.SourceTable = source;
 
             instance.Root.SetActive(true);
             instance.Scrim.SetActive(true);
@@ -74,6 +78,7 @@ namespace EpicLoot_UnityLib
 
             instance.Root.SetActive(false);
             instance.Scrim.SetActive(false);
+            instance.SourceTable = null;
         }
 
         public static bool IsVisible()

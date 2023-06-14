@@ -173,6 +173,10 @@ namespace EpicLoot.CraftingV2
             var conversionType = (MaterialConversionType)mode;
             var conversions = MaterialConversions.Conversions.GetValues(conversionType, true);
 
+            var featureValues = EnchantingTableUI.instance.SourceTable.GetFeatureCurrentValue(EnchantingFeature.ConvertMaterials);
+            var materialConversionAmount = float.IsNaN(featureValues.Item1) ? -1 : featureValues.Item1;
+            var runestoneConversionAmount = float.IsNaN(featureValues.Item2) ? -1 : featureValues.Item2;
+
             var player = Player.m_localPlayer;
             var inventory = player.GetInventory();
 
@@ -260,7 +264,11 @@ namespace EpicLoot.CraftingV2
             sb.AppendLine($"{item.m_shared.m_name} \u2794 <color={rarityColor}>{rarityDisplay}</color> {item.GetDecoratedName(rarityColor)}");
             sb.AppendLine($"<color={rarityColor}>");
 
-            var effectCountWeights = LootRoller.GetEffectCountsPerRarity(rarity);
+            var featureValues = EnchantingTableUI.instance.SourceTable.GetFeatureCurrentValue(EnchantingFeature.Enchant);
+            var highValueBonus = float.IsNaN(featureValues.Item1) ? 0 : featureValues.Item1;
+            var midValueBonus = float.IsNaN(featureValues.Item2) ? 0 : featureValues.Item2;
+
+            var effectCountWeights = LootRoller.GetEffectCountsPerRarity(rarity, true);
             float totalWeight = effectCountWeights.Sum(x => x.Value);
             foreach (var effectCountEntry in effectCountWeights)
             {
@@ -454,7 +462,7 @@ namespace EpicLoot.CraftingV2
             magicItem.SetEffectAsAugmented(augmentindex);
             item.SaveMagicItem(magicItem);
 
-            var choiceDialog = AugmentTabController.CreateAugmentChoiceDialog();
+            var choiceDialog = AugmentTabController.CreateAugmentChoiceDialog(true);
             choiceDialog.transform.SetParent(EnchantingTableUI.instance.transform);
 
             var rt = (RectTransform)choiceDialog.transform;
@@ -572,7 +580,12 @@ namespace EpicLoot.CraftingV2
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
+
+            var featureValues = EnchantingTableUI.instance.SourceTable.GetFeatureCurrentValue(EnchantingFeature.Disenchant);
+            var reducedCost = 0;
+            if (!float.IsNaN(featureValues.Item2))
+                reducedCost = (int)featureValues.Item2;
+
             foreach (var itemAmountConfig in costList)
             {
                 var prefab = ObjectDB.instance.GetItemPrefab(itemAmountConfig.Item);
@@ -601,6 +614,18 @@ namespace EpicLoot.CraftingV2
         {
             if (item.IsMagic(out var magicItem) && magicItem.CanBeDisenchanted())
             {
+                var featureValues = EnchantingTableUI.instance.SourceTable.GetFeatureCurrentValue(EnchantingFeature.Disenchant);
+                var bonusItemChance = 0;
+                if (!float.IsNaN(featureValues.Item1))
+                    bonusItemChance = (int)featureValues.Item1;
+
+                if (Random.Range(0, 99) < bonusItemChance)
+                {
+                    EnchantingTableUI.instance.PlayEnchantBonusSFX();
+
+                    bonusItems = GetSacrificeProducts(new List<Tuple<ItemDrop.ItemData, int>>() { new(item, 1) });
+                }
+
                 item.Data().Remove<MagicItemComponent>();
             }
         }
