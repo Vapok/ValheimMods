@@ -266,6 +266,7 @@
     <None Include="abilities.json" />
     <None Include="adventuredata.json" />
     <None Include="enchantcosts.json" />
+    <None Include="enchantingupgrades.json" />
     <None Include="info.md" />
     <None Include="iteminfo.json" />
     <None Include="itemnames.json" />
@@ -303,7 +304,6 @@
     <EmbeddedResource Include="..\ValheimUnity\Assets\ExternalLibraries\EpicLoot-UnityLib.dll">
       <Link>EpicLoot-UnityLib.dll</Link>
     </EmbeddedResource>
-    <Content Include="enchantingupgrades.json" />
     <Content Include="ILRepack.targets">
       <SubType>Designer</SubType>
     </Content>
