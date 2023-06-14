@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Common;
+using EpicLoot_UnityLib;
 using EpicLoot.Crafting;
 using EpicLoot.Data;
 using EpicLoot.GatedItemType;
@@ -256,7 +257,7 @@ namespace EpicLoot
                         {
                             var rarity = RollItemRarity(lootDrop, luckFactor);
                             var itemType = prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_itemType;
-                            var disenchantProducts = EnchantCostsHelper.GetDisenchantProducts(true, itemType, rarity);
+                            var disenchantProducts = EnchantCostsHelper.GetSacrificeProducts(true, itemType, rarity);
                             if (disenchantProducts != null)
                             {
                                 foreach (var itemAmountConfig in disenchantProducts)
@@ -521,7 +522,7 @@ namespace EpicLoot
                     throw new ArgumentOutOfRangeException(nameof(rarity), rarity, null);
             }
 
-            var featureValues = useEnchantingUpgrades && EnchantingTableUI.instance && EnchantingTableUI.instance.SourceTable
+            /*var featureValues = useEnchantingUpgrades && EnchantingTableUI.instance && EnchantingTableUI.instance.SourceTable
                 ? EnchantingTableUI.instance.SourceTable.GetFeatureCurrentValue(EnchantingFeature.Enchant)
                 : new Tuple<float, float>(float.NaN, float.NaN);
             var highValueBonus = float.IsNaN(featureValues.Item1) ? 0 : featureValues.Item1;
@@ -544,7 +545,7 @@ namespace EpicLoot
                 result[0] = new KeyValuePair<int, float>(entry.Key, entry.Value - highValueBonus - midValueBonus);
             }
 
-            return result;
+            return result;*/
         }
 
         public static MagicItemEffect RollEffect(MagicItemEffectDefinition effectDef, ItemRarity itemRarity, MagicItemEffectDefinition.ValueDef valuesOverride = null)

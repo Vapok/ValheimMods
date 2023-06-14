@@ -12,7 +12,7 @@ namespace EpicLoot_UnityLib
 
         public delegate List<InventoryItemListElement> GetDisenchantItemsDelegate();
         public delegate List<InventoryItemListElement> GetDisenchantCostDelegate(ItemDrop.ItemData item);
-        public delegate void DisenchantItemDelegate(ItemDrop.ItemData item);
+        public delegate List<InventoryItemListElement> DisenchantItemDelegate(ItemDrop.ItemData item);
 
         public static GetDisenchantItemsDelegate GetDisenchantItems;
         public static GetDisenchantCostDelegate GetDisenchantCost;
