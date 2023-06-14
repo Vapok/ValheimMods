@@ -23,8 +23,9 @@ namespace EpicLoot_UnityLib
         public static EnchantingTableUI instance { get; set; }
 
         public delegate void AugaFixupDelegate(EnchantingTableUI ui);
-
         public static AugaFixupDelegate AugaFixup;
+        public delegate void TabActivationDelegate(EnchantingTableUI ui);
+        public static TabActivationDelegate TabActivation;
 
         private int _hiddenFrames;
 
@@ -47,6 +48,7 @@ namespace EpicLoot_UnityLib
             }
 
             AugaFixup(this);
+            TabActivation(this);
         }
 
         public static void Show(GameObject enchantingUiPrefab, EnchantingTable source)
@@ -143,6 +145,16 @@ namespace EpicLoot_UnityLib
                 if (!panelCapturedInput)
                     Hide();
             }
+        }
+
+        public static void UpdateTabActivation()
+        {
+            TabActivation(instance);
+        }
+
+        public static void UpdateUpgradeActivation()
+        {
+            TabActivation(instance);
         }
 
         public void LockTabs()

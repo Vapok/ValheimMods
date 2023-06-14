@@ -12,11 +12,25 @@ using Random = UnityEngine.Random;
 
 namespace EpicLoot.CraftingV2
 {
+    [Flags]
+    public enum EnchantingTabs : uint
+    {
+        None = 0,
+        Sacrifice = 1 << 0,
+        ConvertMaterials = 1 << 1,
+        Enchant = 1 << 2,
+        Augment = 1 << 3,
+        Disenchant = 1 << 4,
+        //Helheim = 1 << 5,
+        Upgrade = 1 << 6
+    }
+
     public class EnchantingUIController : MonoBehaviour
     {
         public static void Initialize()
         {
             EnchantingTableUI.AugaFixup = EnchantingUIAugaFixup.AugaFixup;
+            EnchantingTableUI.TabActivation = TabActivation;
             MultiSelectItemList.SortByRarity = SortByRarity;
             MultiSelectItemList.SortByName = SortByName;
             MultiSelectItemListElement.SetMagicItem = SetMagicItem;
@@ -33,10 +47,65 @@ namespace EpicLoot.CraftingV2
             AugmentUI.GetAvailableEffects = GetAvailableAugmentEffects;
             AugmentUI.GetAugmentCost = GetAugmentCost;
             AugmentUI.AugmentItem = AugmentItem;
+            EnchantingTable.UpgradesActive = UpgradesActive;
+            FeatureStatus.UpgradesActive = UpgradesActive;
             DisenchantUI.GetDisenchantItems = GetDisenchantItems;
             DisenchantUI.GetDisenchantCost = GetDisenchantCost;
             DisenchantUI.DisenchantItem = DisenchantItem;
             FeatureStatus.MakeFeatureUnlockTooltip = MakeFeatureUnlockTooltip;
+        }
+
+        private static bool UpgradesActive(EnchantingFeature feature, out bool featureActive)
+        {
+            featureActive = false;
+
+            var tabEnum = EnchantingTabs.None;
+
+            switch (feature)
+            {
+                case EnchantingFeature.Augment:
+                    tabEnum = EnchantingTabs.Augment;
+                    break;
+                case EnchantingFeature.Enchant:
+                    tabEnum = EnchantingTabs.Enchant;
+                    break;
+                case EnchantingFeature.Disenchant:
+                    tabEnum = EnchantingTabs.Disenchant;
+                    break;
+                case EnchantingFeature.ConvertMaterials:
+                    tabEnum = EnchantingTabs.ConvertMaterials;
+                    break;
+                case EnchantingFeature.Sacrifice:
+                    tabEnum = EnchantingTabs.Sacrifice;
+                    break;
+            }
+
+            featureActive = (tabEnum & EpicLoot.EnchantingTableActivatedTabs.Value) != 0;
+            
+            return EpicLoot.EnchantingTableUpgradesActive.Value;
+        }
+
+        private static void TabActivation(EnchantingTableUI ui)
+        {
+            if (ui == null || ui.TabHandler == null)
+                return;
+            
+            for (int i = 0; i < ui.TabHandler.transform.childCount; i++)
+            {
+                var tabGo = ui.TabHandler.transform.GetChild(i).gameObject;
+                var tabBitwise = 1 << i;
+                switch ((EnchantingTabs)tabBitwise)
+                {
+                    case EnchantingTabs.Upgrade:
+                            tabGo.SetActive(EpicLoot.EnchantingTableUpgradesActive.Value);
+                        break;
+                    case EnchantingTabs.None:
+                        break;
+                    default:
+                        tabGo.SetActive((EpicLoot.EnchantingTableActivatedTabs.Value & (EnchantingTabs)tabBitwise) != 0);
+                        break;
+                }
+            }
         }
 
         private static void MakeFeatureUnlockTooltip(GameObject obj)

@@ -15,8 +15,11 @@ namespace EpicLoot_UnityLib
         public UITooltip Tooltip;
 
         public delegate void MakeFeatureUnlockTooltipDelegate(GameObject obj);
-
         public static MakeFeatureUnlockTooltipDelegate MakeFeatureUnlockTooltip;
+
+        public delegate bool UpgradesActiveDelegate(EnchantingFeature feature, out bool featureActive);
+        public static UpgradesActiveDelegate UpgradesActive;
+
 
         public void Awake()
         {
@@ -92,7 +95,7 @@ namespace EpicLoot_UnityLib
                     for (var index = 0; index < Stars.Length; index++)
                     {
                         var star = Stars[index];
-                        star.gameObject.SetActive(level > index);
+                        star.gameObject.SetActive(level > index && UpgradesActive(Feature,out _));
                     }
 
                     if (ManyStarsLabel != null)
@@ -103,7 +106,7 @@ namespace EpicLoot_UnityLib
                     UnlockedLabel.SetActive(level == 0);
             }
 
-            if (Tooltip != null)
+            if (Tooltip != null && UpgradesActive(Feature,out _))
             {
                 Tooltip.m_topic = Localization.instance.Localize(EnchantingTableUpgrades.GetFeatureName(Feature));
 

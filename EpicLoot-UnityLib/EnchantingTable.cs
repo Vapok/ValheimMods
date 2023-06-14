@@ -10,11 +10,16 @@ namespace EpicLoot_UnityLib
         public const string DisplayNameLocID = "mod_epicloot_assets_enchantingtable";
         public const int FeatureUnavailableSentinel = -2;
         public const int FeatureLockedSentinel = -1;
+        public const int FeatureLevelOne = 1;
 
         public GameObject EnchantingUIPrefab;
 
         public event Action<EnchantingFeature, int> OnFeatureLevelChanged;
         public event Action OnAnyFeatureLevelChanged;
+        
+        public delegate bool UpgradesActiveDelegate(EnchantingFeature feature, out bool featureActive);
+        public static UpgradesActiveDelegate UpgradesActive;
+
 
         private Player _interactingPlayer;
         private ZDO _zdo;
@@ -100,6 +105,12 @@ namespace EpicLoot_UnityLib
 
         private static int GetDefaultFeatureLevel(EnchantingFeature feature)
         {
+            if (!UpgradesActive(feature, out var featureActive))
+                return FeatureLevelOne;
+            
+            if (!featureActive)
+                return FeatureUnavailableSentinel;
+            
             return EnchantingTableUpgrades.Config.DefaultFeatureLevels.TryGetValue(feature, out var level) ? level : FeatureUnavailableSentinel;
         }
 
@@ -116,6 +127,12 @@ namespace EpicLoot_UnityLib
             if (_zdo == null)
                 return FeatureUnavailableSentinel;
 
+            if (!UpgradesActive(feature, out var featureActive))
+                return FeatureLevelOne;
+            
+            if (!featureActive)
+                return FeatureUnavailableSentinel;
+            
             var featureName = feature.ToString();
             return _zdo.GetInt(featureName, FeatureUnavailableSentinel);
         }
@@ -125,10 +142,17 @@ namespace EpicLoot_UnityLib
             if (_zdo == null)
                 return;
 
-            if (level > (EnchantingTableUpgrades.Config.MaximumFeatureLevels.TryGetValue(feature, out var maxLevel) ? maxLevel : 1))
+            if (!UpgradesActive(feature, out var featureActive))
             {
-                Debug.LogWarning($"[EpicLoot] Tried to set enchanting feature ({feature}) higher than max level!");
-                return;
+                level = FeatureLevelOne;
+            }
+            else
+            {
+                if (level > (EnchantingTableUpgrades.Config.MaximumFeatureLevels.TryGetValue(feature, out var maxLevel) ? maxLevel : 1))
+                {
+                    Debug.LogWarning($"[EpicLoot] Tried to set enchanting feature ({feature}) higher than max level!");
+                    return;
+                }
             }
 
             var featureName = feature.ToString();
