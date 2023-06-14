@@ -97,10 +97,13 @@
   <ItemGroup>
     <Compile Include="AugmentUI.cs" />
     <Compile Include="DisenchantUI.cs" />
+    <Compile Include="EnchantBonus.cs" />
     <Compile Include="EnchantingTable.cs" />
     <Compile Include="EnchantingTableUI.cs" />
     <Compile Include="EnchantingTableUIPanelBase.cs" />
+    <Compile Include="EnchantingTableUpgrades.cs" />
     <Compile Include="EnchantUI.cs" />
+    <Compile Include="FeatureStatus.cs" />
     <Compile Include="FeatureStatus3D.cs" />
     <Compile Include="MultiSelectItemList.cs" />
     <Compile Include="MultiSelectItemListElement.cs" />

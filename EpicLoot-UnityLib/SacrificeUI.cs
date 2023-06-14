@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace EpicLoot_UnityLib
 {
     public class SacrificeUI : EnchantingTableUIPanelBase
     {
         public MultiSelectItemList SacrificeProducts;
-
+        public EnchantBonus BonusPanel;
         public delegate List<InventoryItemListElement> GetSacrificeItemsDelegate();
         public delegate List<InventoryItemListElement> GetSacrificeProductsDelegate(List<Tuple<ItemDrop.ItemData, int>> items);
 

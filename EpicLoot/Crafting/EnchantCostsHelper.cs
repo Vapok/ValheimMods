@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EpicLoot_UnityLib;
 using UnityEngine;
 
 namespace EpicLoot.Crafting
