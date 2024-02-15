@@ -85,6 +85,7 @@ namespace EpicLoot.Crafting
         public static List<ItemAmountConfig> GetEnchantCost(ItemDrop.ItemData item, ItemRarity rarity)
         {
             var type = item.m_shared.m_itemType;
+            var name = item.m_shared.m_name;
 
             var configEntry = Config.EnchantCosts.Find(x => {
                 if (x.Rarity != rarity)
@@ -93,6 +94,11 @@ namespace EpicLoot.Crafting
                 }
 
                 if (x.ItemTypes?.Count > 0 && !x.ItemTypes.Contains(type.ToString()))
+                {
+                    return false;
+                }
+
+                if (x.ItemNames?.Count > 0 && !x.ItemNames.Contains(name))
                 {
                     return false;
                 }
@@ -106,6 +112,7 @@ namespace EpicLoot.Crafting
         public static List<ItemAmountConfig> GetAugmentCost(ItemDrop.ItemData item, ItemRarity rarity, int recipeEffectIndex)
         {
             var type = item.m_shared.m_itemType;
+            var name = item.m_shared.m_name;
 
             var configEntry = Config.AugmentCosts.Find(x => {
                 if (x.Rarity != rarity)
@@ -114,6 +121,11 @@ namespace EpicLoot.Crafting
                 }
 
                 if (x.ItemTypes?.Count > 0 && !x.ItemTypes.Contains(type.ToString()))
+                {
+                    return false;
+                }
+
+                if (x.ItemNames?.Count > 0 && !x.ItemNames.Contains(name))
                 {
                     return false;
                 }
