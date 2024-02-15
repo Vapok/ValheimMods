@@ -35,6 +35,7 @@ namespace EpicLoot.Crafting
     {
         public ItemRarity Rarity;
         public List<string> ItemTypes = new List<string>();
+        public List<string> ItemNames = new List<string>();
         public List<ItemAmountConfig> Cost = new List<ItemAmountConfig>();
     }
 
@@ -43,6 +44,7 @@ namespace EpicLoot.Crafting
     {
         public ItemRarity Rarity;
         public List<string> ItemTypes = new List<string>();
+        public List<string> ItemNames = new List<string>();
         public List<ItemAmountConfig> Cost = new List<ItemAmountConfig>();
     }
 
