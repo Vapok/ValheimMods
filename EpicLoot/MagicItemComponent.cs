@@ -653,18 +653,64 @@ namespace EpicLoot
             return sets;
         }
 
+        public static float GetEffectDiminishingReturnsTotalValue(List<float> effectValues, string effectType = null)
+        {
+            var LIMITED_EFFECTS = new List<string>() {
+                MagicEffectType.AddPhysicalResistancePercentage,
+                MagicEffectType.AddBluntResistancePercentage,
+                MagicEffectType.AddSlashingResistancePercentage,
+                MagicEffectType.AddPiercingResistancePercentage,
+                MagicEffectType.AddChoppingResistancePercentage,
+                MagicEffectType.AddFireResistancePercentage,
+                MagicEffectType.AddFrostResistancePercentage,
+                MagicEffectType.AddLightningResistancePercentage,
+                MagicEffectType.AddPoisonResistancePercentage,
+                MagicEffectType.AddSpiritResistancePercentage,
+                MagicEffectType.AddElementalResistancePercentage,
+                MagicEffectType.AvoidDamageTaken,
+                MagicEffectType.ModifyAttackStaminaUse,
+                MagicEffectType.ModifyBlockStaminaUse,
+                MagicEffectType.ModifyJumpStaminaUse,
+                MagicEffectType.ModifySprintStaminaUse,
+                MagicEffectType.Slow
+            };
+
+            if (effectType == null || LIMITED_EFFECTS.Contains(effectType))
+            {
+                var limitedValues = effectValues.Select(x => Math.Min(x, 90.0f)).ToList();
+                limitedValues.Sort((float a, float b) => { if (a > b) return -1; return 1; });
+
+                var result = limitedValues[0];
+                for (var i = 1; i < limitedValues.Count; i++)
+                {
+                    result = result + (100.0f - result) * (limitedValues[i] * 0.01f);
+                }
+
+                return result;
+            }
+
+            return effectValues.Sum();
+        }
+
         public static float GetTotalActiveMagicEffectValue(this Player player, string effectType, float scale = 1.0f, ItemDrop.ItemData ignoreThisItem = null)
         {
-            var totalValue = scale * (EquipmentEffectCache.Get(player, effectType, () =>
-            {
-                var allEffects = player.GetAllActiveMagicEffects(effectType);
-                return allEffects.Count > 0 ? allEffects.Select(x => x.EffectValue).Sum() : null;
-            }) ?? 0);
+            var allValues = player.GetAllActiveMagicEffects(effectType).Select(x => x.EffectValue).ToList();
 
             if (ignoreThisItem != null && player.IsItemEquiped(ignoreThisItem) && ignoreThisItem.IsMagic(out var magicItem))
             {
-                totalValue -= magicItem.GetTotalEffectValue(effectType, scale);
+                var ignoredValue = magicItem.GetEffects(effectType).Sum(x => x.EffectValue);
+                allValues.Remove(ignoredValue);
             }
+
+            var totalValue = scale * (EquipmentEffectCache.Get(player, effectType, () =>
+            {
+                if (allValues.Count == 0)
+                {
+                    return null;
+                }
+
+                return GetEffectDiminishingReturnsTotalValue(allValues, effectType);
+            }) ?? 0);
 
             return totalValue;
         }

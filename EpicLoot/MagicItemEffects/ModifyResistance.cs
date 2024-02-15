@@ -47,29 +47,29 @@ namespace EpicLoot.MagicItemEffects
 			    return;
 		    }
 
-		    float sum(params string[] effects)
-		    {
-			    float value = 1;
-			    foreach (var effect in effects)
-			    {
-				    value -= player.GetTotalActiveMagicEffectValue(effect, 0.01f);
-			    }
+            float resultingDamageCoeff(string eff1, string eff2)
+            {
+                float totalSum = PlayerExtensions.GetEffectDiminishingReturnsTotalValue(new List<float>()
+                {
+                    player.GetTotalActiveMagicEffectValue(eff1, 0.01f),
+                    player.GetTotalActiveMagicEffectValue(eff2, 0.01f)
+                });
 
-			    return Math.Max(value, 0);
-		    }
+                return 1.0f - totalSum;
+            }
 
-		    // elemental resistances
-		    hit.m_damage.m_fire *= sum(MagicEffectType.AddFireResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
-		    hit.m_damage.m_frost *= sum(MagicEffectType.AddFrostResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
-		    hit.m_damage.m_lightning *= sum(MagicEffectType.AddLightningResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
-		    hit.m_damage.m_poison *= sum(MagicEffectType.AddPoisonResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
-		    hit.m_damage.m_spirit *= sum(MagicEffectType.AddSpiritResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
+            // elemental resistances
+            hit.m_damage.m_fire *= resultingDamageCoeff(MagicEffectType.AddFireResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
+		    hit.m_damage.m_frost *= resultingDamageCoeff(MagicEffectType.AddFrostResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
+		    hit.m_damage.m_lightning *= resultingDamageCoeff(MagicEffectType.AddLightningResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
+		    hit.m_damage.m_poison *= resultingDamageCoeff(MagicEffectType.AddPoisonResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
+		    hit.m_damage.m_spirit *= resultingDamageCoeff(MagicEffectType.AddSpiritResistancePercentage, MagicEffectType.AddElementalResistancePercentage);
 		    
 		    // physical resistances
-		    hit.m_damage.m_blunt *= sum(MagicEffectType.AddBluntResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
-		    hit.m_damage.m_slash *= sum(MagicEffectType.AddSlashingResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
-		    hit.m_damage.m_pierce *= sum(MagicEffectType.AddPiercingResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
-		    hit.m_damage.m_chop *= sum(MagicEffectType.AddChoppingResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
+		    hit.m_damage.m_blunt *= resultingDamageCoeff(MagicEffectType.AddBluntResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
+		    hit.m_damage.m_slash *= resultingDamageCoeff(MagicEffectType.AddSlashingResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
+		    hit.m_damage.m_pierce *= resultingDamageCoeff(MagicEffectType.AddPiercingResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
+		    hit.m_damage.m_chop *= resultingDamageCoeff(MagicEffectType.AddChoppingResistancePercentage, MagicEffectType.AddPhysicalResistancePercentage);
 	    }
     }
 }
