@@ -336,7 +336,7 @@ namespace EpicLoot
             return ValuesPerRarity.Magic != null && ValuesPerRarity.Epic != null && ValuesPerRarity.Rare != null && ValuesPerRarity.Legendary != null;
         }
 
-        public ValueDef GetValuesForRarity(ItemRarity itemRarity)
+        public ValueDef GetValuesForRarity(ItemRarity itemRarity, string itemName)
         {
             switch (itemRarity)
             {
@@ -426,7 +426,7 @@ namespace EpicLoot
                 return false;
             }
 
-            return effectDef.GetValuesForRarity(rarity) == null;
+            return effectDef.GetValuesForRarity(rarity, null) == null;
         }
     }
 }
