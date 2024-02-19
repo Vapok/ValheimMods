@@ -27,6 +27,12 @@ namespace EpicLoot_UnityLib
                 UnlockedObject.SetActive(featureIsUnlocked);
 
             var currentLevel = SourceTable.GetFeatureLevel(Feature);
+            if(!EnchantingTable.UpgradesActive(Feature, out bool featureActive))
+            {
+                // To improve table appearance when no upgrades are available ever
+                currentLevel = 1;
+            }
+
             for (var index = 0; index < LevelObjects.Length; index++)
             {
                 var levelObject = LevelObjects[index];
