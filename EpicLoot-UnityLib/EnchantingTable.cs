@@ -11,7 +11,7 @@ namespace EpicLoot_UnityLib
         public const string DisplayNameLocID = "mod_epicloot_assets_enchantingtable";
         public const int FeatureUnavailableSentinel = -2;
         public const int FeatureLockedSentinel = -1;
-        public const int FeatureLevelOne = 1;
+        public const int FeatureLevelOne = 0;
 
         public GameObject EnchantingUIPrefab;
 
