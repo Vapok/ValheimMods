@@ -15,6 +15,11 @@ namespace EpicLoot.CraftingV2
             if (table == null)
                 return;
 
+            if(!EpicLoot.EnchantingTableUpgradesActive.Value)
+            {
+                return;
+            }
+
             foreach (EnchantingFeature feature in Enum.GetValues(typeof(EnchantingFeature)))
             {
                 if (!table.IsFeatureAvailable(feature) || table.IsFeatureLocked(feature))
