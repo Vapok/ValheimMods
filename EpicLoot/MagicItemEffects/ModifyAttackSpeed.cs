@@ -18,13 +18,16 @@ namespace EpicLoot.MagicItemEffects
             {
                 return speed;
             }
+
+            double bonus = 0.0;
             
             ModifyWithLowHealth.Apply(player, MagicEffectType.ModifyAttackSpeed, effect =>
             {
-                
-                speed += player.GetTotalActiveMagicEffectValue(effect, 0.01f);
+                bonus += player.GetTotalActiveMagicEffectValue(effect, 0.01f);
             });
-            
+
+            speed *= (1.0 + bonus);
+
             return speed;
         }
         [UsedImplicitly]
