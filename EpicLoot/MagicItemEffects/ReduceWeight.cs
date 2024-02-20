@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 
 namespace EpicLoot.MagicItemEffects
 {
@@ -14,7 +15,7 @@ namespace EpicLoot.MagicItemEffects
             }
             else if (__instance.HasMagicEffect(MagicEffectType.ReduceWeight))
             {
-                var totalWeightReduction = __instance.GetMagicItem().GetTotalEffectValue(MagicEffectType.ReduceWeight, 0.01f);
+                var totalWeightReduction = Math.Min(__instance.GetMagicItem().GetTotalEffectValue(MagicEffectType.ReduceWeight, 0.01f), 1.0f);
                 __result *= 1.0f - totalWeightReduction;
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using EpicLoot.Adventure;
@@ -55,7 +56,7 @@ namespace EpicLoot
             {
                 var effectType = entry.Key;
                 var effectDef = MagicItemEffectDefinitions.Get(effectType);
-                var sum = entry.Value.Sum(x => x.Key.EffectValue);
+                float sum = (float)Math.Round(PlayerExtensions.GetEffectDiminishingReturnsTotalValue(entry.Value.Select(x => x.Key.EffectValue).ToList(), effectType));
                 var totalEffectText = MagicItem.GetEffectText(effectDef, sum);
                 var highestRarity = (ItemRarity) entry.Value.Max(x => (int) x.Value.GetRarity());
 
