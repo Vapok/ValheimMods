@@ -668,6 +668,7 @@ namespace EpicLoot
                 MagicEffectType.AddSpiritResistancePercentage,
                 MagicEffectType.AddElementalResistancePercentage,
                 MagicEffectType.AvoidDamageTaken,
+                MagicEffectType.AvoidDamageTakenLowHealth,
                 MagicEffectType.ModifyAttackStaminaUse,
                 MagicEffectType.ModifyBlockStaminaUse,
                 MagicEffectType.ModifyJumpStaminaUse,
