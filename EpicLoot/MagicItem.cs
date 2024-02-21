@@ -39,7 +39,7 @@ namespace EpicLoot
     [Serializable]
     public class MagicItem
     {
-        public int Version = 2;
+        public int Version = 3;
         public ItemRarity Rarity;
         public List<MagicItemEffect> Effects = new List<MagicItemEffect>();
         public string TypeNameOverride;
@@ -48,6 +48,7 @@ namespace EpicLoot
         public string DisplayName;
         public string LegendaryID;
         public string SetID;
+        public string ItemName;
 
         public string GetItemTypeName(ItemDrop.ItemData baseItem)
         {
@@ -71,7 +72,7 @@ namespace EpicLoot
             {
                 var effect = Effects[index];
                 var pip = EpicLoot.GetMagicEffectPip(IsEffectAugmented(index));
-                tooltip.AppendLine($"{pip} {GetEffectText(effect, Rarity, showRange)}");
+                tooltip.AppendLine($"{pip} {GetEffectText(effect, Rarity, ItemName, showRange)}");
             }
 
             tooltip.Append($"</color>");
@@ -127,11 +128,11 @@ namespace EpicLoot
             return result;
         }
 
-        public static string GetEffectText(MagicItemEffect effect, ItemRarity rarity, bool showRange, string legendaryID, MagicItemEffectDefinition.ValueDef valuesOverride)
+        public static string GetEffectText(MagicItemEffect effect, ItemRarity rarity, string itemName, bool showRange, string legendaryID, MagicItemEffectDefinition.ValueDef valuesOverride)
         {
             var effectDef = MagicItemEffectDefinitions.Get(effect.EffectType);
             var result = GetEffectText(effectDef, effect.EffectValue);
-            var values = valuesOverride ?? (string.IsNullOrEmpty(legendaryID) ? effectDef.GetValuesForRarity(rarity) : UniqueLegendaryHelper.GetLegendaryEffectValues(legendaryID, effect.EffectType));
+            var values = valuesOverride ?? (string.IsNullOrEmpty(legendaryID) ? effectDef.GetValuesForRarity(rarity, itemName) : UniqueLegendaryHelper.GetLegendaryEffectValues(legendaryID, effect.EffectType));
             if (showRange && values != null)
             {
                 if (!Mathf.Approximately(values.MinValue, values.MaxValue))
@@ -142,14 +143,14 @@ namespace EpicLoot
             return result;
         }
 
-        public static string GetEffectText(MagicItemEffect effect, ItemRarity rarity, bool showRange, string legendaryID = null)
+        public static string GetEffectText(MagicItemEffect effect, ItemRarity rarity, string itemName, bool showRange, string legendaryID = null)
         {
-            return GetEffectText(effect, rarity, showRange, legendaryID, null);
+            return GetEffectText(effect, rarity, itemName, showRange, legendaryID, null);
         }
 
-        public static string GetEffectText(MagicItemEffect effect, MagicItemEffectDefinition.ValueDef valuesOverride)
+        public static string GetEffectText(MagicItemEffect effect, string itemName, MagicItemEffectDefinition.ValueDef valuesOverride)
         {
-            return GetEffectText(effect, ItemRarity.Legendary, false, null, valuesOverride);
+            return GetEffectText(effect, ItemRarity.Legendary, itemName, false, null, valuesOverride);
         }
 
         public void ReplaceEffect(int index, MagicItemEffect newEffect)
