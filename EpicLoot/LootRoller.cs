@@ -693,6 +693,23 @@ namespace EpicLoot
 
         public static List<KeyValuePair<int, float>> GetDropsForLevelOrDistance([NotNull] LootTable lootTable, int level, int distance, bool useNextHighestIfNotPresent = true)
         {
+            if (lootTable.DistanceLoot.Count > 0)
+            {
+                var drops = lootTable.Drops;
+
+                int maxDistanceUsed = -1;
+                foreach (var distanceLoot in lootTable.DistanceLoot)
+                {
+                    if (distance >= distanceLoot.Distance && distanceLoot.Distance > maxDistanceUsed)
+                    {
+                        drops = distanceLoot.Drops;
+                        maxDistanceUsed = distanceLoot.Distance;
+                    }
+                }
+
+                return ToDropList(drops);
+            }
+
             if (level == 3 && !ArrayUtils.IsNullOrEmpty(lootTable.Drops3))
             {
                 if (lootTable.LeveledLoot.Any(x => x.Level == level))
@@ -717,23 +734,6 @@ namespace EpicLoot
                 {
                     EpicLoot.LogWarning($"Duplicated leveled drops for ({lootTable.Object} lvl {level}), using 'Drops'");
                 }
-                return ToDropList(lootTable.Drops);
-            }
-
-            if(lootTable.DistanceLoot.Count > 0)
-            {
-                var drops = lootTable.Drops;
-
-                int maxDistanceUsed = -1;
-                foreach (var distanceLoot in lootTable.DistanceLoot)
-                {
-                    if(distance >= distanceLoot.Distance && distanceLoot.Distance > maxDistanceUsed)
-                    {
-                        drops = distanceLoot.Drops;
-                        maxDistanceUsed = distanceLoot.Distance;
-                    }
-                }
-
                 return ToDropList(lootTable.Drops);
             }
 
@@ -762,6 +762,23 @@ namespace EpicLoot
 
         public static LootDrop[] GetLootForLevelOrDistance([NotNull] LootTable lootTable, int level, int distance, bool useNextHighestIfNotPresent = true)
         {
+            if (lootTable.DistanceLoot.Count > 0)
+            {
+                var loot = lootTable.Loot;
+
+                int maxDistanceUsed = -1;
+                foreach (var distanceLoot in lootTable.DistanceLoot)
+                {
+                    if (distance >= distanceLoot.Distance && distanceLoot.Distance > maxDistanceUsed)
+                    {
+                        loot = distanceLoot.Loot;
+                        maxDistanceUsed = distanceLoot.Distance;
+                    }
+                }
+
+                return loot.ToArray();
+            }
+
             if (level == 3 && !ArrayUtils.IsNullOrEmpty(lootTable.Loot3))
             {
                 if (lootTable.LeveledLoot.Any(x => x.Level == level))
@@ -787,23 +804,6 @@ namespace EpicLoot
                     EpicLoot.LogWarning($"Duplicated leveled loot for ({lootTable.Object} lvl {level}), using 'Loot'");
                 }
                 return lootTable.Loot.ToArray();
-            }
-
-            if (lootTable.DistanceLoot.Count > 0)
-            {
-                var loot = lootTable.Loot;
-
-                int maxDistanceUsed = -1;
-                foreach (var distanceLoot in lootTable.DistanceLoot)
-                {
-                    if (distance >= distanceLoot.Distance && distanceLoot.Distance > maxDistanceUsed)
-                    {
-                        loot = distanceLoot.Loot;
-                        maxDistanceUsed = distanceLoot.Distance;
-                    }
-                }
-
-                return loot.ToArray();
             }
 
             for (var lvl = level; lvl >= 1; --lvl)
