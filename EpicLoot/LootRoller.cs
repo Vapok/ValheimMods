@@ -199,7 +199,9 @@ namespace EpicLoot
 
             var luckFactor = GetLuckFactor(dropPoint);
 
-            var drops = GetDropsForLevel(lootTable, level);
+            int distanceFromWorldCenter = (int)new Vector3(dropPoint.x, 0, dropPoint.z).magnitude;
+
+            var drops = GetDropsForLevelOrDistance(lootTable, level, distanceFromWorldCenter);
             if (drops.Count == 0)
             {
                 return results;
@@ -233,7 +235,7 @@ namespace EpicLoot
                 return results;
             }
             
-            var loot = GetLootForLevel(lootTable, level);
+            var loot = GetLootForLevelOrDistance(lootTable, level, distanceFromWorldCenter);
             
             if (loot == null)
                 loot = new LootDrop[] { };
@@ -440,7 +442,7 @@ namespace EpicLoot
                 var lootTable = LootTables[objectName].FirstOrDefault();
                 if (lootTable != null)
                 {
-                    lootList = GetLootForLevel(lootTable, level);
+                    lootList = GetLootForLevelOrDistance(lootTable, level, 0);
                     return true;
                 }
 
@@ -689,7 +691,7 @@ namespace EpicLoot
             return results;
         }
 
-        public static List<KeyValuePair<int, float>> GetDropsForLevel([NotNull] LootTable lootTable, int level, bool useNextHighestIfNotPresent = true)
+        public static List<KeyValuePair<int, float>> GetDropsForLevelOrDistance([NotNull] LootTable lootTable, int level, int distance, bool useNextHighestIfNotPresent = true)
         {
             if (level == 3 && !ArrayUtils.IsNullOrEmpty(lootTable.Drops3))
             {
@@ -718,6 +720,23 @@ namespace EpicLoot
                 return ToDropList(lootTable.Drops);
             }
 
+            if(lootTable.DistanceLoot.Count > 0)
+            {
+                var drops = lootTable.Drops;
+
+                int maxDistanceUsed = -1;
+                foreach (var distanceLoot in lootTable.DistanceLoot)
+                {
+                    if(distance >= distanceLoot.Distance && distanceLoot.Distance > maxDistanceUsed)
+                    {
+                        drops = distanceLoot.Drops;
+                        maxDistanceUsed = distanceLoot.Distance;
+                    }
+                }
+
+                return ToDropList(lootTable.Drops);
+            }
+
             for (var lvl = level; lvl >= 1; --lvl)
             {
                 var found = lootTable.LeveledLoot.Find(x => x.Level == lvl);
@@ -741,7 +760,7 @@ namespace EpicLoot
             return drops.Select(x => new KeyValuePair<int, float>((int) x[0], x[1])).ToList();
         }
 
-        public static LootDrop[] GetLootForLevel([NotNull] LootTable lootTable, int level, bool useNextHighestIfNotPresent = true)
+        public static LootDrop[] GetLootForLevelOrDistance([NotNull] LootTable lootTable, int level, int distance, bool useNextHighestIfNotPresent = true)
         {
             if (level == 3 && !ArrayUtils.IsNullOrEmpty(lootTable.Loot3))
             {
@@ -768,6 +787,23 @@ namespace EpicLoot
                     EpicLoot.LogWarning($"Duplicated leveled loot for ({lootTable.Object} lvl {level}), using 'Loot'");
                 }
                 return lootTable.Loot.ToArray();
+            }
+
+            if (lootTable.DistanceLoot.Count > 0)
+            {
+                var loot = lootTable.Loot;
+
+                int maxDistanceUsed = -1;
+                foreach (var distanceLoot in lootTable.DistanceLoot)
+                {
+                    if (distance >= distanceLoot.Distance && distanceLoot.Distance > maxDistanceUsed)
+                    {
+                        loot = distanceLoot.Loot;
+                        maxDistanceUsed = distanceLoot.Distance;
+                    }
+                }
+
+                return loot.ToArray();
             }
 
             for (var lvl = level; lvl >= 1; --lvl)
@@ -912,7 +948,7 @@ namespace EpicLoot
         public static void PrintLuckTest(string lootTableName, float luckFactor)
         {
             var lootTable = GetLootTable(lootTableName)[0];
-            var lootDrop = GetLootForLevel(lootTable, 1)[0];
+            var lootDrop = GetLootForLevelOrDistance(lootTable, 1, 0)[0];
             lootDrop = ResolveLootDrop(lootDrop);
             var rarityBase = GetRarityWeights(lootDrop.Rarity, 0);
             var rarityLuck = GetRarityWeights(lootDrop.Rarity, luckFactor);
@@ -945,12 +981,12 @@ namespace EpicLoot
             Debug.LogWarning(sb.ToString());
         }
 
-        public static void PrintLootResolutionTest(string lootTableName, int level, int itemIndex)
+        public static void PrintLootResolutionTest(string lootTableName, int level, int distance, int itemIndex)
         {
-            Debug.LogWarning($"{lootTableName}:{level}:{itemIndex}");
+            Debug.LogWarning($"{lootTableName}:{level}:{distance}:{itemIndex}");
 
             var lootTable = GetLootTable(lootTableName)[0];
-            var lootDrop = GetLootForLevel(lootTable, level)[itemIndex];
+            var lootDrop = GetLootForLevelOrDistance(lootTable, level, distance)[itemIndex];
             lootDrop = ResolveLootDrop(lootDrop);
             var rarity = lootDrop.Rarity;
 

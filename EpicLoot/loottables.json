@@ -1456,6 +1456,16 @@
       "Loot": [
         { "Item": "Tier0Everything", "Weight": 4, "Rarity": [ 97, 2, 1, 0] },
         { "Item": "Tier1Everything", "Weight": 1, "Rarity": [ 97, 2, 1, 0] }
+      ],
+      "DistanceLoot": [
+        {
+          "Distance": 4000,
+          "Drops": [ [0, 40], [1, 38], [2, 20], [3, 2] ],
+          "Loot": [
+            { "Item": "Tier0Everything", "Weight": 4, "Rarity": [ 97, 2, 1, 0] },
+            { "Item": "Tier1Everything", "Weight": 1, "Rarity": [ 97, 2, 1, 0] }
+          ]
+        }
       ]
     },
     //TreasureChest_blackforest
