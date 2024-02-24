@@ -60,7 +60,7 @@ namespace EpicLoot.LegendarySystem
 
         public static IList<LegendaryInfo> GetAvailableLegendaries(ItemDrop.ItemData baseItem, MagicItem magicItem, bool rollSetItem)
         {
-            var availableLegendaries = LegendaryInfo.Values.Where(x => x.IsSetItem == rollSetItem && x.Requirements.CheckRequirements(baseItem, magicItem)).ToList();
+            var availableLegendaries = LegendaryInfo.Values.Where(x => (x.IsSetItem == rollSetItem || EpicLoot.AlwaysDropUniqueLegendaries.Value) && x.Requirements.CheckRequirements(baseItem, magicItem)).ToList();
             if (availableLegendaries.Count == 0)
             {
                 availableLegendaries.AddItem(GenericLegendaryInfo);
