@@ -28,6 +28,8 @@ namespace EpicLoot.LegendarySystem
         public string Description;
         public MagicItemEffectRequirements Requirements;
         public List<GuaranteedMagicEffect> GuaranteedMagicEffects = new List<GuaranteedMagicEffect>();
+        public List<GuaranteedMagicEffect> GuaranteedMagicEffectsExceptional = new List<GuaranteedMagicEffect>();
+        public List<GuaranteedMagicEffect> GuaranteedMagicEffectsElite = new List<GuaranteedMagicEffect>();
         public int GuaranteedEffectCount = -1;
         public float SelectionWeight = 1;
         public string EquipFx;

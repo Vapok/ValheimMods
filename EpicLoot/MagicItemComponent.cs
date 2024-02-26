@@ -264,13 +264,33 @@ namespace EpicLoot
         public static string GetDecoratedName(this ItemDrop.ItemData itemData, string colorOverride = null)
         {
             var color = "white";
+
+            var magicItem = itemData.GetMagicItem();
+            var qualityStr = "";
+            if (magicItem != null)
+            {
+                var quality = magicItem.Quality;
+                if (quality == ItemQuality.Elite)
+                {
+                    qualityStr = Localization.instance.Localize("$mod_epicloot_elite");
+                }
+                else if (quality == ItemQuality.Exceptional)
+                {
+                    qualityStr = Localization.instance.Localize("$mod_epicloot_exceptional");
+                }
+                if (qualityStr != "")
+                {
+                    qualityStr = qualityStr + " ";
+                }
+            }
+
             var name = GetDisplayName(itemData);
 
             if (!string.IsNullOrEmpty(colorOverride))
             {
                 color = colorOverride;
             }
-            else if (itemData.IsMagic(out var magicItem))
+            else if (magicItem != null)
             {
                 color = magicItem.GetColorString();
             }
@@ -279,7 +299,7 @@ namespace EpicLoot
                 color = itemData.GetCraftingMaterialRarityColor();
             }
 
-            return $"<color={color}>{name}</color>";
+            return $"<color={color}>{qualityStr}{name}</color>";
         }
 
         public static string GetDescription(this ItemDrop.ItemData itemData)

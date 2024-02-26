@@ -9,6 +9,7 @@ namespace EpicLoot
         public string Item;
         public float Weight = 1;
         public float[] Rarity;
+        public float[] Quality;
     }
 
     [Serializable]

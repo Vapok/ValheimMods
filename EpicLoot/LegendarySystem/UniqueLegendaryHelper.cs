@@ -69,10 +69,25 @@ namespace EpicLoot.LegendarySystem
             return availableLegendaries;
         }
 
-        public static MagicItemEffectDefinition.ValueDef GetLegendaryEffectValues(string legendaryID, string effectType)
+        public static MagicItemEffectDefinition.ValueDef GetLegendaryEffectValues(string legendaryID, string effectType, ItemQuality quality)
         {
             if (LegendaryInfo.TryGetValue(legendaryID, out var legendaryInfo))
             {
+                if (quality == ItemQuality.Elite)
+                {
+                    if (legendaryInfo.GuaranteedMagicEffectsElite.TryFind(x => x.Type == effectType, out var guaranteedMagicEffectElite))
+                    {
+                        return guaranteedMagicEffectElite.Values;
+                    }
+                }
+                else if (quality == ItemQuality.Exceptional)
+                {
+                    if (legendaryInfo.GuaranteedMagicEffectsExceptional.TryFind(x => x.Type == effectType, out var guaranteedMagicEffectExceptional))
+                    {
+                        return guaranteedMagicEffectExceptional.Values;
+                    }
+                }
+
                 if (legendaryInfo.GuaranteedMagicEffects.TryFind(x => x.Type == effectType, out var guaranteedMagicEffect))
                 {
                     return guaranteedMagicEffect.Values;

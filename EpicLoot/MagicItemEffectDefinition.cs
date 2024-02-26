@@ -305,6 +305,8 @@ namespace EpicLoot
         {
             public List<string> ItemNames = new List<string>();
             public ValuesPerRarityDef ValuesPerRarity = new ValuesPerRarityDef();
+            public ValuesPerRarityDef ValuesPerRarityExceptional = new ValuesPerRarityDef();
+            public ValuesPerRarityDef ValuesPerRarityElite = new ValuesPerRarityDef();
         }
 
         public string Type { get; set; }
@@ -313,6 +315,8 @@ namespace EpicLoot
         public string Description = "";
         public MagicItemEffectRequirements Requirements = new MagicItemEffectRequirements();
         public ValuesPerRarityDef ValuesPerRarity = new ValuesPerRarityDef();
+        public ValuesPerRarityDef ValuesPerRarityExceptional = new ValuesPerRarityDef();
+        public ValuesPerRarityDef ValuesPerRarityElite = new ValuesPerRarityDef();
         public List<ValuesPerItemNameDef> ValuesPerItemName = new List<ValuesPerItemNameDef>();
         public float SelectionWeight = 1;
         public bool CanBeAugmented = true;
@@ -344,16 +348,29 @@ namespace EpicLoot
             return ValuesPerRarity.Magic != null && ValuesPerRarity.Epic != null && ValuesPerRarity.Rare != null && ValuesPerRarity.Legendary != null;
         }
 
-        public ValueDef GetValuesForRarity(ItemRarity itemRarity, string itemName)
+        public ValueDef GetValuesForRarity(ItemRarity itemRarity, string itemName, ItemQuality quality)
         {
-            ValueDef ValueForRarity(ValuesPerRarityDef valuesPerRarity)
+            ValueDef ValueForQuality(ValueDef normal, ValueDef exceptional, ValueDef elite)
+            {
+                if (quality == ItemQuality.Elite && elite != null)
+                {
+                    return elite;
+                }
+                if (quality == ItemQuality.Exceptional && exceptional != null)
+                {
+                    return exceptional;
+                }
+                return normal;
+            }
+
+            ValueDef ValueForRarity(ValuesPerRarityDef normal, ValuesPerRarityDef exceptional, ValuesPerRarityDef elite)
             {
                 switch (itemRarity)
                 {
-                    case ItemRarity.Magic: return valuesPerRarity.Magic;
-                    case ItemRarity.Rare: return valuesPerRarity.Rare;
-                    case ItemRarity.Epic: return valuesPerRarity.Epic;
-                    case ItemRarity.Legendary: return valuesPerRarity.Legendary;
+                    case ItemRarity.Magic: return ValueForQuality(normal?.Magic, exceptional?.Magic, elite?.Magic);
+                    case ItemRarity.Rare: return ValueForQuality(normal?.Rare, exceptional?.Rare, elite?.Rare);
+                    case ItemRarity.Epic: return ValueForQuality(normal?.Epic, exceptional?.Epic, elite?.Epic);
+                    case ItemRarity.Legendary: return ValueForQuality(normal?.Legendary, exceptional?.Legendary, elite?.Legendary);
                     case ItemRarity.Mythic:
                         // TODO: Mythic Hookup
                         return null;//ValuesPerRarity.Mythic;
@@ -364,18 +381,18 @@ namespace EpicLoot
 
             if (string.IsNullOrEmpty(itemName) || ValuesPerItemName == null)
             {
-                return ValueForRarity(ValuesPerRarity);
+                return ValueForRarity(ValuesPerRarity, ValuesPerRarityExceptional, ValuesPerRarityElite);
             }
 
             for (var i = 0; i < ValuesPerItemName.Count; i++)
             {
                 if (ValuesPerItemName[i].ItemNames.Contains(itemName))
                 {
-                    return ValueForRarity(ValuesPerItemName[i].ValuesPerRarity);
+                    return ValueForRarity(ValuesPerItemName[i].ValuesPerRarity, ValuesPerItemName[i].ValuesPerRarityExceptional, ValuesPerItemName[i].ValuesPerRarityElite);
                 }
             }
 
-            return ValueForRarity(ValuesPerRarity);
+            return ValueForRarity(ValuesPerRarity, ValuesPerRarityExceptional, ValuesPerRarityElite);
         }
     }
 
@@ -452,7 +469,7 @@ namespace EpicLoot
                 return false;
             }
 
-            return effectDef.GetValuesForRarity(rarity, null) == null;
+            return effectDef.GetValuesForRarity(rarity, null, ItemQuality.Normal) == null;
         }
     }
 }
