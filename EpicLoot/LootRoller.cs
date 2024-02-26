@@ -674,7 +674,16 @@ namespace EpicLoot
                 { ItemRarity.Legendary, rarity.Length >= 4 ? rarity[3] : 0 }
             };
 
-            return ModifyRarityByLuck(rarityWeights, luckFactor);
+            for (var r = ItemRarity.Legendary; r >= ItemRarity.Magic; r--)
+            {
+                if (rarityWeights[r] > 0)
+                {
+                    rarityWeights[r] = rarityWeights[r] * (1 + luckFactor);
+                    break;
+                }
+            }
+
+            return rarityWeights;
         }
 
         public static List<LootTable> GetLootTable(string objectName)
@@ -877,37 +886,6 @@ namespace EpicLoot
                     Debug.LogWarning($"{index++}: {player?.m_name}: {player?.m_nview?.GetZDO()?.GetInt("el-luk")}");
                 }
             }
-        }
-
-        public static Dictionary<ItemRarity, float> ModifyRarityByLuck(IReadOnlyDictionary<ItemRarity, float> rarityWeights, float luckFactor = 0)
-        {
-            var results = new Dictionary<ItemRarity, float>();
-            for (var rarity = ItemRarity.Magic; rarity <= ItemRarity.Legendary; rarity++)
-            {
-                var skewFactor = GetSkewFactor(rarity);
-                results.Add(rarity, rarityWeights[rarity] * GetSkewedLuckFactor(luckFactor, skewFactor));
-            }
-
-            return results;
-        }
-
-        public static float GetSkewFactor(ItemRarity rarity)
-        {
-            switch (rarity)
-            {
-                case ItemRarity.Magic: return -0.2f;
-                case ItemRarity.Rare: return 0.0f;
-                case ItemRarity.Epic: return 0.2f;
-                case ItemRarity.Legendary: return 1;
-                case ItemRarity.Mythic: return 1.1f;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(rarity), rarity, null);
-            }
-        }
-
-        public static float GetSkewedLuckFactor(float luckFactor, float skewFactor)
-        {
-            return Mathf.Max(0, 1 + luckFactor * skewFactor);
         }
 
         public static void PrintLuckTest(string lootTableName, float luckFactor)
