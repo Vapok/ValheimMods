@@ -300,12 +300,20 @@ namespace EpicLoot
             public ValueDef Mythic;
         }
 
+        [Serializable]
+        public class ValuesPerItemNameDef
+        {
+            public List<string> ItemNames = new List<string>();
+            public ValuesPerRarityDef ValuesPerRarity = new ValuesPerRarityDef();
+        }
+
         public string Type { get; set; }
 
         public string DisplayText = "";
         public string Description = "";
         public MagicItemEffectRequirements Requirements = new MagicItemEffectRequirements();
         public ValuesPerRarityDef ValuesPerRarity = new ValuesPerRarityDef();
+        public List<ValuesPerItemNameDef> ValuesPerItemName = new List<ValuesPerItemNameDef>();
         public float SelectionWeight = 1;
         public bool CanBeAugmented = true;
         public bool CanBeDisenchanted = true;
@@ -336,20 +344,38 @@ namespace EpicLoot
             return ValuesPerRarity.Magic != null && ValuesPerRarity.Epic != null && ValuesPerRarity.Rare != null && ValuesPerRarity.Legendary != null;
         }
 
-        public ValueDef GetValuesForRarity(ItemRarity itemRarity)
+        public ValueDef GetValuesForRarity(ItemRarity itemRarity, string itemName)
         {
-            switch (itemRarity)
+            ValueDef ValueForRarity(ValuesPerRarityDef valuesPerRarity)
             {
-                case ItemRarity.Magic:      return ValuesPerRarity.Magic;
-                case ItemRarity.Rare:       return ValuesPerRarity.Rare;
-                case ItemRarity.Epic:       return ValuesPerRarity.Epic;
-                case ItemRarity.Legendary:  return ValuesPerRarity.Legendary;
-                case ItemRarity.Mythic:
-                    // TODO: Mythic Hookup
-                    return null;//ValuesPerRarity.Mythic;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(itemRarity), itemRarity, null);
+                switch (itemRarity)
+                {
+                    case ItemRarity.Magic: return valuesPerRarity.Magic;
+                    case ItemRarity.Rare: return valuesPerRarity.Rare;
+                    case ItemRarity.Epic: return valuesPerRarity.Epic;
+                    case ItemRarity.Legendary: return valuesPerRarity.Legendary;
+                    case ItemRarity.Mythic:
+                        // TODO: Mythic Hookup
+                        return null;//ValuesPerRarity.Mythic;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(itemRarity), itemRarity, null);
+                }
             }
+
+            if (string.IsNullOrEmpty(itemName) || ValuesPerItemName == null)
+            {
+                return ValueForRarity(ValuesPerRarity);
+            }
+
+            for (var i = 0; i < ValuesPerItemName.Count; i++)
+            {
+                if (ValuesPerItemName[i].ItemNames.Contains(itemName))
+                {
+                    return ValueForRarity(ValuesPerItemName[i].ValuesPerRarity);
+                }
+            }
+
+            return ValueForRarity(ValuesPerRarity);
         }
     }
 
@@ -426,7 +452,7 @@ namespace EpicLoot
                 return false;
             }
 
-            return effectDef.GetValuesForRarity(rarity) == null;
+            return effectDef.GetValuesForRarity(rarity, null) == null;
         }
     }
 }

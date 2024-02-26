@@ -119,7 +119,7 @@ namespace EpicLoot
                     itemData = targetItemData.Clone();
                     itemData.m_durability = float.PositiveInfinity;
                     var magicItemComponent = itemData.Data().GetOrCreate<MagicItemComponent>();
-                    var stubMagicItem = new MagicItem { Rarity = ItemRarity.Legendary, LegendaryID = zdoLegendaryID };
+                    var stubMagicItem = new MagicItem { Rarity = ItemRarity.Legendary, ItemName = itemData.m_shared.m_name, LegendaryID = zdoLegendaryID };
                     magicItemComponent.SetMagicItem(stubMagicItem);
 
                     ForceResetVisEquipment(player, itemData);

@@ -618,7 +618,7 @@ namespace EpicLoot
                 return;
             }
 
-            var replacementEffect = LootRoller.RollEffect(replacementEffectDef, magicItem.Rarity);
+            var replacementEffect = LootRoller.RollEffect(replacementEffectDef, magicItem.Rarity, itemData.m_shared.m_name);
             magicItem.Effects[index] = replacementEffect;
             itemData.SaveMagicItem(magicItem);
         }
