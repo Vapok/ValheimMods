@@ -72,7 +72,7 @@ namespace EpicLoot
             {
                 var effect = Effects[index];
                 var pip = EpicLoot.GetMagicEffectPip(IsEffectAugmented(index));
-                tooltip.AppendLine($"{pip} {GetEffectText(effect, Rarity, ItemName, showRange)}");
+                tooltip.AppendLine($"{pip} {GetEffectText(effect, Rarity, ItemName, showRange, LegendaryID)}");
             }
 
             tooltip.Append($"</color>");
@@ -132,7 +132,22 @@ namespace EpicLoot
         {
             var effectDef = MagicItemEffectDefinitions.Get(effect.EffectType);
             var result = GetEffectText(effectDef, effect.EffectValue);
-            var values = valuesOverride ?? (string.IsNullOrEmpty(legendaryID) ? effectDef.GetValuesForRarity(rarity, itemName) : UniqueLegendaryHelper.GetLegendaryEffectValues(legendaryID, effect.EffectType));
+            MagicItemEffectDefinition.ValueDef values = null;
+            if (valuesOverride != null)
+            {
+                values = valuesOverride;
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(legendaryID))
+                {
+                    values = UniqueLegendaryHelper.GetLegendaryEffectValues(legendaryID, effect.EffectType);
+                }
+                if (values == null)
+                {
+                    values = effectDef.GetValuesForRarity(rarity, itemName);
+                }
+            }
             if (showRange && values != null)
             {
                 if (!Mathf.Approximately(values.MinValue, values.MaxValue))
@@ -146,11 +161,6 @@ namespace EpicLoot
         public static string GetEffectText(MagicItemEffect effect, ItemRarity rarity, string itemName, bool showRange, string legendaryID = null)
         {
             return GetEffectText(effect, rarity, itemName, showRange, legendaryID, null);
-        }
-
-        public static string GetEffectText(MagicItemEffect effect, string itemName, MagicItemEffectDefinition.ValueDef valuesOverride)
-        {
-            return GetEffectText(effect, ItemRarity.Legendary, itemName, false, null, valuesOverride);
         }
 
         public void ReplaceEffect(int index, MagicItemEffect newEffect)
