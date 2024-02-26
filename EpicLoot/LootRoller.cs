@@ -22,6 +22,7 @@ namespace EpicLoot
         public static readonly Dictionary<string, LootItemSet> ItemSets = new Dictionary<string, LootItemSet>();
         public static readonly Dictionary<string, List<LootTable>> LootTables = new Dictionary<string, List<LootTable>>();
 
+        private static System.Random _random; 
         private static WeightedRandomCollection<KeyValuePair<int, float>> _weightedDropCountTable;
         private static WeightedRandomCollection<LootDrop> _weightedLootTable;
         private static WeightedRandomCollection<MagicItemEffectDefinition> _weightedEffectTable;
@@ -39,13 +40,13 @@ namespace EpicLoot
         {
             Config = lootConfig;
             
-            var random = new System.Random();
-            _weightedDropCountTable = new WeightedRandomCollection<KeyValuePair<int, float>>(random);
-            _weightedLootTable = new WeightedRandomCollection<LootDrop>(random);
-            _weightedEffectTable = new WeightedRandomCollection<MagicItemEffectDefinition>(random);
-            _weightedEffectCountTable = new WeightedRandomCollection<KeyValuePair<int, float>>(random);
-            _weightedRarityTable = new WeightedRandomCollection<KeyValuePair<ItemRarity, float>>(random);
-            _weightedLegendaryTable = new WeightedRandomCollection<LegendaryInfo>(random);
+            _random = new System.Random();
+            _weightedDropCountTable = new WeightedRandomCollection<KeyValuePair<int, float>>(_random);
+            _weightedLootTable = new WeightedRandomCollection<LootDrop>(_random);
+            _weightedEffectTable = new WeightedRandomCollection<MagicItemEffectDefinition>(_random);
+            _weightedEffectCountTable = new WeightedRandomCollection<KeyValuePair<int, float>>(_random);
+            _weightedRarityTable = new WeightedRandomCollection<KeyValuePair<ItemRarity, float>>(_random);
+            _weightedLegendaryTable = new WeightedRandomCollection<LegendaryInfo>(_random);
 
             ItemSets.Clear();
             LootTables.Clear();
@@ -623,7 +624,18 @@ namespace EpicLoot
                 {
                     EpicLoot.Log($"RollEffect: {effectDef.Type} {itemRarity} value={value} (min={valuesDef.MinValue} max={valuesDef.MaxValue})");
                     var incrementCount = (int)((valuesDef.MaxValue - valuesDef.MinValue) / valuesDef.Increment);
-                    value = valuesDef.MinValue + (Random.Range(0, incrementCount + 1) * valuesDef.Increment);
+
+                    double v;
+                    if (EpicLoot.EffectValueRollDistribution.Value == EffectValueRollDistributionTypes.TendsToLowAverage)
+                    {
+                        v = Math.Pow(_random.NextDouble() * _random.NextDouble(), 0.7);
+                    }
+                    else
+                    {
+                        v = _random.NextDouble();
+                    }
+
+                    value = valuesDef.MinValue + (int)(v * (incrementCount + 1)) * valuesDef.Increment;
                 }
             }
 
