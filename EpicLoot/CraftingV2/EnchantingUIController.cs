@@ -353,6 +353,14 @@ namespace EpicLoot.CraftingV2
             var rarityDisplay = EpicLoot.GetRarityDisplayName(rarity);
             sb.AppendLine($"{item.m_shared.m_name} \u2794 <color={rarityColor}>{rarityDisplay}</color> {item.GetDecoratedName(rarityColor)}");
             sb.AppendLine($"<color={rarityColor}>");
+            if (EpicLoot.EffectValueRollDistribution.Value == EffectValueRollDistributionTypes.TendsToLowAverage)
+            {
+                sb.AppendLine($"Chances for effect value in range [min - max] to be rolled higher than min + X * (max - min), where X");
+                sb.AppendLine($"0.9 - 1%   0.8 - 4%   0.7 - 9%");
+                sb.AppendLine($"0.6 - 16%  0.5 - 25%  0.4 - 37%");
+                sb.AppendLine($"0.3 - 51%  0.2 - 67%  0.1 - 84%");
+                sb.AppendLine();
+            }
 
             var featureValues = EnchantingTableUI.instance.SourceTable.GetFeatureCurrentValue(EnchantingFeature.Enchant);
             var highValueBonus = float.IsNaN(featureValues.Item1) ? 0 : featureValues.Item1;
@@ -527,6 +535,15 @@ namespace EpicLoot.CraftingV2
             
             var sb = new StringBuilder();
             sb.Append($"<color={rarityColor}>");
+            if (EpicLoot.EffectValueRollDistribution.Value == EffectValueRollDistributionTypes.TendsToLowAverage)
+            {
+                sb.AppendLine($"Chances for effect value in range [min - max] to be rolled higher than min + X * (max - min), where X");
+                sb.AppendLine($"0.9 - 1%   0.8 - 4%   0.7 - 9%");
+                sb.AppendLine($"0.6 - 16%  0.5 - 25%  0.4 - 37%");
+                sb.AppendLine($"0.3 - 51%  0.2 - 67%  0.1 - 84%");
+                sb.AppendLine();
+            }
+
             foreach (var effectDef in availableEffects)
             {
                 var values = effectDef.GetValuesForRarity(item.GetRarity());
