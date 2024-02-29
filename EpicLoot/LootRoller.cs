@@ -273,60 +273,72 @@ namespace EpicLoot
                 var itemName = !string.IsNullOrEmpty(lootDrop?.Item) ? lootDrop.Item : "Invalid Item Name";
                 var rarityLength = lootDrop?.Rarity?.Length != null ? lootDrop.Rarity.Length : -1;
                 EpicLoot.Log($"Item: {itemName} - Rarity Count: {rarityLength} - Weight: {lootDrop.Weight}");
-                
-                if (!cheatsActive && EpicLoot.ItemsToMaterialsDropRatio.Value > 0)
+
+                var itemID = (CheatDisableGating) ? lootDrop.Item : GatedItemTypeHelper.GetGatedItemID(lootDrop.Item);
+
+                bool ReplaceWithMats()
                 {
-                    var clampedConvertRate = Mathf.Clamp(EpicLoot.ItemsToMaterialsDropRatio.Value, 0.0f, 1.0f);
-                    var replaceWithMats = Random.Range(0.0f, 1.0f) < clampedConvertRate;
-                    if (replaceWithMats)
+                    if (itemID == null)
                     {
-                        GameObject prefab = null;
+                        return true;
+                    }
 
-                        try
-                        {
-                            prefab = ObjectDB.instance.GetItemPrefab(lootDrop.Item);
-                        }
-                        catch (Exception e)
-                        {
-                            EpicLoot.LogWarning($"Unable to get Prefab for [{lootDrop.Item}]. Continuing.");
-                            EpicLoot.LogWarning($"Error: {e.Message}");
-                        }
+                    if (!cheatsActive && EpicLoot.ItemsToMaterialsDropRatio.Value > 0)
+                    {
+                        var clampedConvertRate = Mathf.Clamp(EpicLoot.ItemsToMaterialsDropRatio.Value, 0.0f, 1.0f);
+                        return Random.Range(0.0f, 1.0f) < clampedConvertRate;
+                    }
 
-                        if (prefab != null)
+                    return false;
+                };
+
+                if (ReplaceWithMats())
+                {
+                    GameObject prefab = null;
+
+                    try
+                    {
+                        prefab = ObjectDB.instance.GetItemPrefab(lootDrop.Item);
+                    }
+                    catch (Exception e)
+                    {
+                        EpicLoot.LogWarning($"Unable to get Prefab for [{lootDrop.Item}]. Continuing.");
+                        EpicLoot.LogWarning($"Error: {e.Message}");
+                    }
+
+                    if (prefab != null)
+                    {
+                        var rarity = RollItemRarity(lootDrop, luckFactor);
+                        var itemType = prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_itemType;
+                        var disenchantProducts = EnchantCostsHelper.GetSacrificeProducts(true, itemType, rarity);
+                        if (disenchantProducts != null)
                         {
-                            var rarity = RollItemRarity(lootDrop, luckFactor);
-                            var itemType = prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_itemType;
-                            var disenchantProducts = EnchantCostsHelper.GetSacrificeProducts(true, itemType, rarity);
-                            if (disenchantProducts != null)
+                            foreach (var itemAmountConfig in disenchantProducts)
                             {
-                                foreach (var itemAmountConfig in disenchantProducts)
+                                GameObject materialPrefab = null;
+                                try
                                 {
-                                    GameObject materialPrefab = null;
-                                    try
-                                    {
-                                        materialPrefab = ObjectDB.instance.GetItemPrefab(itemAmountConfig.Item);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        EpicLoot.LogWarning($"Unable to get Disenchant Product Prefab for [{itemAmountConfig?.Item ?? "Invalid Item"}]. Continuing.");
-                                        EpicLoot.LogWarning($"Error: {e.Message}");
-                                    }
-
-                                    if (materialPrefab == null) continue;
-                                    var materialItem = SpawnLootForDrop(materialPrefab, dropPoint, true);
-                                    var materialItemDrop = materialItem.GetComponent<ItemDrop>();
-                                    materialItemDrop.m_itemData.m_stack = itemAmountConfig.Amount;
-                                    if (materialItemDrop.m_itemData.IsMagicCraftingMaterial())
-                                        materialItemDrop.m_itemData.m_variant = EpicLoot.GetRarityIconIndex(rarity);
-                                    results.Add(materialItem);
+                                    materialPrefab = ObjectDB.instance.GetItemPrefab(itemAmountConfig.Item);
                                 }
+                                catch (Exception e)
+                                {
+                                    EpicLoot.LogWarning($"Unable to get Disenchant Product Prefab for [{itemAmountConfig?.Item ?? "Invalid Item"}]. Continuing.");
+                                    EpicLoot.LogWarning($"Error: {e.Message}");
+                                }
+
+                                if (materialPrefab == null) continue;
+                                var materialItem = SpawnLootForDrop(materialPrefab, dropPoint, true);
+                                var materialItemDrop = materialItem.GetComponent<ItemDrop>();
+                                materialItemDrop.m_itemData.m_stack = itemAmountConfig.Amount;
+                                if (materialItemDrop.m_itemData.IsMagicCraftingMaterial())
+                                    materialItemDrop.m_itemData.m_variant = EpicLoot.GetRarityIconIndex(rarity);
+                                results.Add(materialItem);
                             }
                         }
-
-                        continue;
                     }
+
+                    continue;
                 }
-                var itemID = (CheatDisableGating) ? lootDrop.Item : GatedItemTypeHelper.GetGatedItemID(lootDrop.Item);
 
                 GameObject itemPrefab = null;
 
