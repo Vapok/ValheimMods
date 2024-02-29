@@ -131,6 +131,7 @@
     <Compile Include="Adventure\Game_Patch.cs" />
     <Compile Include="Adventure\MinimapController.cs" />
     <Compile Include="Attack_Patch.cs" />
+    <Compile Include="LootFilter.cs" />
     <Compile Include="CraftingV2\EnchantingTable_Patch.cs" />
     <Compile Include="CraftingV2\EnchantingUIAugaFixup.cs" />
     <Compile Include="CraftingV2\EnchantingUIController.cs" />
@@ -287,6 +288,7 @@
     <None Include="translations.json" />
     <None Include="loottables.json" />
     <None Include="magiceffects.json" />
+    <None Include="lootfilters.json" />
     <None Include="manifest.json" />
     <None Include="CHANGELOG.md" />
     <None Include="todo.md" />
@@ -338,6 +340,7 @@
       xcopy "$(ProjectDir)legendaries.json" "G:\Steam\steamapps\common\Valheim-Dev\BepInEx\plugins\$(ProjectName)\" /q /y /i
       xcopy "$(ProjectDir)abilities.json" "G:\Steam\steamapps\common\Valheim-Dev\BepInEx\plugins\$(ProjectName)\" /q /y /i
       xcopy "$(ProjectDir)materialconversions.json" "G:\Steam\steamapps\common\Valheim-Dev\BepInEx\plugins\$(ProjectName)\" /q /y /i
+      xcopy "$(ProjectDir)lootfilter.json" "G:\Steam\steamapps\common\Valheim-Dev\BepInEx\plugins\$(ProjectName)\" /q /y /i
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" />

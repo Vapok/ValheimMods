@@ -119,6 +119,7 @@ namespace EpicLoot
         public static ConfigEntry<bool> UseScrollingCraftDescription;
         public static ConfigEntry<bool> TransferMagicItemToCrafts;
         public static ConfigEntry<EffectValueRollDistributionTypes> EffectValueRollDistribution;
+        public static ConfigEntry<bool> UseLootFilters;
         public static ConfigEntry<CraftingTabStyle> CraftingTabStyle;
         private static ConfigEntry<bool> _loggingEnabled;
         private static ConfigEntry<LogLevel> _logLevel;
@@ -243,6 +244,7 @@ namespace EpicLoot
             ItemsToMaterialsDropRatio = SyncedConfig("Balance", "Items To Materials Drop Ratio", 0.0f, "Sets the chance that item drops are instead dropped as magic crafting materials. 0 = all items, no materials. 1 = all materials, no items. Values between 0 and 1 change the ratio of items to materials that drop. At 0.5, half of everything that drops would be items and the other half would be materials. Min = 0, Max = 1");
             TransferMagicItemToCrafts = SyncedConfig("Balance", "Transfer Enchants to Crafted Items", false, "When enchanted items are used as ingredients in recipes, transfer the highest enchant to the newly crafted item. Default: False.");
             EffectValueRollDistribution = SyncedConfig("Balance", "Effect Value Roll Distribution", EffectValueRollDistributionTypes.Linear, "Function to be used for rolling effect values on an item. Linear: any number in the possible effect value range can be rolled with equal chance. TendsToLowAverage: values close to min and especially max of the range are very unlikely to be rolled. Default: Linear.");
+            UseLootFilters = SyncedConfig("Balance", "Use Loot Filters", false, "If set to true, all item drop will be affected by loot filters (defined in lootfilters.json). Loot filters allow to prevent dropping of the items you don't need anymore or auto sacrifice the unneeded items into materials on drop.");
 
             AlwaysShowWelcomeMessage = Config.Bind("Debug", "AlwaysShowWelcomeMessage", false, "Just a debug flag for testing the welcome message, do not use.");
             OutputPatchedConfigFiles = Config.Bind("Debug", "OutputPatchedConfigFiles", false, "Just a debug flag for testing the patching system, do not use.");
@@ -496,6 +498,7 @@ namespace EpicLoot
             LoadJsonFile<AbilityConfig>("abilities.json", AbilityDefinitions.Initialize, ConfigType.Synced);
             LoadJsonFile<MaterialConversionsConfig>("materialconversions.json", MaterialConversions.Initialize, ConfigType.Synced);
             LoadJsonFile<EnchantingUpgradesConfig>("enchantingupgrades.json", EnchantingTableUpgrades.InitializeConfig, ConfigType.Synced);
+            LoadJsonFile<LootFiltersConfig>("lootfilters.json", LootFilterDefinitions.Initialize, ConfigType.Synced);
 
             WatchNewPatchConfig();
         }

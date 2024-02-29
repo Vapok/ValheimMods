@@ -278,10 +278,35 @@ namespace EpicLoot
 
                 var itemID = (CheatDisableGating) ? lootDrop.Item : GatedItemTypeHelper.GetGatedItemID(lootDrop.Item);
 
+                var rarity = RollItemRarity(lootDrop, luckFactor);
+                var cheatLegendary = !string.IsNullOrEmpty(CheatForceLegendary);
+                if (cheatLegendary)
+                {
+                    rarity = ItemRarity.Legendary;
+                }
+                var quality = RollItemQuality(lootDrop);
+
+                var lootFilterForcedSacrifice = false;
+                if(LootFilterDefinitions.FilteredOut(itemName, rarity, quality, distanceFromWorldCenter, out lootFilterForcedSacrifice))
+                {
+                    if (!lootFilterForcedSacrifice)
+                    {
+                        EpicLoot.Log($"Item filtered out due to loot filters");
+                        continue;
+                    }
+                }
+
                 bool ReplaceWithMats()
                 {
                     if (itemID == null)
                     {
+                        EpicLoot.Log($"Item replaced with materials due to its id being null");
+                        return true;
+                    }
+
+                    if (lootFilterForcedSacrifice)
+                    {
+                        EpicLoot.Log($"Item replaced with materials due to loot filters");
                         return true;
                     }
 
@@ -310,7 +335,6 @@ namespace EpicLoot
 
                     if (prefab != null)
                     {
-                        var rarity = RollItemRarity(lootDrop, luckFactor);
                         var itemType = prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_itemType;
                         var disenchantProducts = EnchantCostsHelper.GetSacrificeProducts(true, itemType, rarity);
                         if (disenchantProducts != null)
@@ -365,7 +389,7 @@ namespace EpicLoot
                 {
                     var itemData = itemDrop.m_itemData;
                     var magicItemComponent = itemData.Data().GetOrCreate<MagicItemComponent>();
-                    var magicItem = RollMagicItem(lootDrop, itemData, luckFactor);
+                    var magicItem = RollMagicItem(rarity, quality, itemData, luckFactor);
                     if (CheatForceMagicEffect)
                     {
                         AddDebugMagicEffects(magicItem, itemData.m_shared.m_name);
@@ -375,6 +399,11 @@ namespace EpicLoot
                     itemDrop.Save();
                     InitializeMagicItem(itemData);
                 }
+                else
+                {
+                    EpicLoot.LogWarning($"Warning: can't make item magic due to a) item {itemName} can't be magic: {!EpicLoot.CanBeMagicItem(itemDrop.m_itemData)} b) loot drop rarity is null or empty: {ArrayUtils.IsNullOrEmpty(lootDrop.Rarity)}");
+                }
+
                 results.Add(item);
             }
             
@@ -473,13 +502,6 @@ namespace EpicLoot
             }
 
             return false;
-        }
-
-        public static MagicItem RollMagicItem(LootDrop lootDrop, ItemDrop.ItemData baseItem, float luckFactor)
-        {
-            var rarity = RollItemRarity(lootDrop, luckFactor);
-            var quality = RollItemQuality(lootDrop);
-            return RollMagicItem(rarity, quality, baseItem, luckFactor);
         }
 
         public static MagicItem RollMagicItem(ItemRarity rarity, ItemQuality quality, ItemDrop.ItemData baseItem, float luckFactor)
