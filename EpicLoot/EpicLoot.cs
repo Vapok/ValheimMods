@@ -1491,7 +1491,7 @@ namespace EpicLoot
             for (var i = 0; i < limit; i++)
             {
                 var level = i + 1;
-                var dropTable = LootRoller.GetDropsForLevel(lootTable, level, false);
+                var dropTable = LootRoller.GetDropsForLevelOrDistance(lootTable, level, 0, false);
                 if (dropTable == null || dropTable.Count == 0)
                 {
                     continue;
@@ -1521,7 +1521,7 @@ namespace EpicLoot
             for (var i = 0; i < limit; i++)
             {
                 var level = i + 1;
-                var lootList = LootRoller.GetLootForLevel(lootTable, level, false);
+                var lootList = LootRoller.GetLootForLevelOrDistance(lootTable, level, 0, false);
                 if (ArrayUtils.IsNullOrEmpty(lootList))
                 {
                     continue;

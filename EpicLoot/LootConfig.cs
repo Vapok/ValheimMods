@@ -21,6 +21,14 @@ namespace EpicLoot
     }
 
     [Serializable]
+    public class DistanceLootDef
+    {
+        public int Distance;
+        public float[][] Drops;
+        public LootDrop[] Loot;
+    }
+
+    [Serializable]
     public class LootTable
     {
         public string Object;
@@ -32,6 +40,7 @@ namespace EpicLoot
         public LootDrop[] Loot2;
         public LootDrop[] Loot3;
         public List<LeveledLootDef> LeveledLoot = new List<LeveledLootDef>();
+        public List<DistanceLootDef> DistanceLoot = new List<DistanceLootDef>();
     }
 
     [Serializable]

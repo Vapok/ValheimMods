@@ -186,7 +186,8 @@ namespace EpicLoot
                 var lootTable = args.Length > 1 ? args[1] : "Greydwarf";
                 var level = args.Length > 2 ? int.Parse(args[2]) : 1;
                 var itemIndex = args.Length > 3 ? int.Parse(args[3]) : 0;
-                LootRoller.PrintLootResolutionTest(lootTable, level, itemIndex);
+                var distance = args.Length > 4 ? int.Parse(args[4]) : 0;
+                LootRoller.PrintLootResolutionTest(lootTable, level, distance, itemIndex);
             }));
             new Terminal.ConsoleCommand("resetcooldowns", "", (args =>
             {
