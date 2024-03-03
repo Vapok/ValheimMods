@@ -49,7 +49,7 @@ namespace EpicLoot
             bool ItemMatches(LootFilter item, out bool dropMats)
             {
                 dropMats = item.DropMaterials;
-                return item.Items.Contains(itemName) && item.Rarities.Contains(rarity) && item.Quality.Contains(quality) && distance > item.Distance;
+                return item.Items.Contains(itemName) && item.Rarities.Contains(rarity) && item.Quality.Contains(quality) && distance >= item.Distance;
             }
 
             foreach (var item in WhiteLists)
