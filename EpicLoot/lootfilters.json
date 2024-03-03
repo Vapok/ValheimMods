@@ -1,0 +1,108 @@
+{
+  "LootFilters": [
+    // example
+    // {
+    //   "Name": "Magic loot filter", - name of the filter for the reference
+    //   "Whitelist": false, - if set to true, the filter works in the opposite way, that is, the matching item will be dropped even if should be filtered out by other loot filters
+    //   "DropMaterials": true, - if set to true, the item materials will be dropped instead of the item itself, if set to false, there will be no drop at all
+    //   "Items": [], - list of item names (check "Item" fields used in loottables.json)
+    //   "Rarities" : [
+    //     "Magic",
+    //     "Rare",
+    //     "Epic",
+    //     "Legendary"
+    //   ],
+    //   "Quality": [
+    //     "Normal",
+    //     "Exceptional",
+    //     "Elite"
+    //   ],
+    //   "Distance": 0, - minimal distance from the center of the world for the filter to be applied
+    //   "Day": 0, - minimal day in the world for the filter to be applied, NOT IMPLEMENTED YET
+    // }
+    {
+      "Name": "Tier0Everything - Normal",
+      "DropMaterials": true,
+      "Items": [
+        "Club",
+        "AxeStone",
+        "Torch",
+        "Hammer",
+        "Hoe",
+        "ArmorRagsLegs",
+        "ArmorRagsChest",
+        "ShieldWood",
+        "ShieldWoodTower"
+      ],
+      "Rarities": [
+        "Magic",
+        "Rare",
+        "Epic"
+      ],
+      "Quality": [
+        "Normal"
+      ],
+      "Distance": 3500
+    },
+    {
+      "Name": "Tier1Everything - Normal",
+      "DropMaterials": true,
+      "Items": [
+        "AxeFlint",
+        "SpearFlint",
+        "KnifeFlint",
+        "Bow",
+        "ArmorLeatherLegs",
+        "ArmorLeatherChest",
+        "HelmetLeather",
+        "CapeDeerHide",
+        "PickaxeAntler",
+        "ShieldBoneTower"
+      ],
+      "Rarities": [
+        "Magic",
+        "Rare",
+        "Epic"
+      ],
+      "Quality": [
+        "Normal"
+      ],
+      "Distance": 3500
+    },
+    {
+      "Name": "Tier2Everything - Normal",
+      "DropMaterials": true,
+      "Items": [
+        "ArmorTrollLeatherLegs",
+        "ArmorTrollLeatherChest",
+        "HelmetTrollLeather",
+        "CapeTrollHide",
+        "KnifeCopper",
+        "SledgeStagbreaker",
+        "SwordBronze",
+        "AxeBronze",
+        "MaceBronze",
+        "AtgeirBronze",
+        "SpearBronze",
+        "BowFineWood",
+        "KnifeChitin",
+        "SpearChitin",
+        "ArmorBronzeLegs",
+        "ArmorBronzeChest",
+        "HelmetBronze",
+        "ShieldBronzeBuckler",
+        "PickaxeBronze",
+        "Cultivator"
+      ],
+      "Rarities": [
+        "Magic",
+        "Rare",
+        "Epic"
+      ],
+      "Quality": [
+        "Normal"
+      ],
+      "Distance": 5000
+    }
+  ]
+}

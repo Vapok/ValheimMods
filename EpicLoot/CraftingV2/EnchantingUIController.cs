@@ -388,7 +388,7 @@ namespace EpicLoot.CraftingV2
             
             foreach (var effectDef in availableEffects)
             {
-                var values = effectDef.GetValuesForRarity(rarity);
+                var values = effectDef.GetValuesForRarity(rarity, item.m_shared.m_name, ItemQuality.Normal);
                 var valueDisplay = values != null ? Mathf.Approximately(values.MinValue, values.MaxValue) ? $"{values.MinValue}" : $"({values.MinValue}-{values.MaxValue})" : "";
                 sb.AppendLine($"‣ {string.Format(Localization.instance.Localize(effectDef.DisplayText), valueDisplay)}");
             }
@@ -418,7 +418,7 @@ namespace EpicLoot.CraftingV2
                 previousDurabilityPercent = item.m_durability / item.GetMaxDurability();
 
             var luckFactor = player.GetTotalActiveMagicEffectValue(MagicEffectType.Luck, 0.01f);
-            var magicItem = LootRoller.RollMagicItem((ItemRarity)rarity, item, luckFactor);
+            var magicItem = LootRoller.RollMagicItem((ItemRarity)rarity, ItemQuality.Normal, item, luckFactor);
 
             var magicItemComponent = item.Data().GetOrCreate<MagicItemComponent>();
             magicItemComponent.SetMagicItem(magicItem);
@@ -520,7 +520,7 @@ namespace EpicLoot.CraftingV2
             if (augmentindex >= 0 && augmentindex < magicItem.Effects.Count)
             {
                 var currentEffectDef = MagicItemEffectDefinitions.Get(magicItem.Effects[augmentindex].EffectType);
-                valuelessEffect = currentEffectDef.GetValuesForRarity(rarity) == null;
+                valuelessEffect = currentEffectDef.GetValuesForRarity(rarity, item.m_shared.m_name, magicItem.Quality) == null;
             }
 
             var availableEffects = MagicItemEffectDefinitions.GetAvailableEffects(item.Extended(), item.GetMagicItem(), valuelessEffect ? -1 : augmentindex);
@@ -529,7 +529,7 @@ namespace EpicLoot.CraftingV2
             sb.Append($"<color={rarityColor}>");
             foreach (var effectDef in availableEffects)
             {
-                var values = effectDef.GetValuesForRarity(item.GetRarity());
+                var values = effectDef.GetValuesForRarity(item.GetRarity(), item.m_shared.m_name, magicItem.Quality);
                 var valueDisplay = values != null ? Mathf.Approximately(values.MinValue, values.MaxValue) ? $"{values.MinValue}" : $"({values.MinValue}-{values.MaxValue})" : "";
                 sb.AppendLine($"‣ {string.Format(Localization.instance.Localize(effectDef.DisplayText), valueDisplay)}");
             }

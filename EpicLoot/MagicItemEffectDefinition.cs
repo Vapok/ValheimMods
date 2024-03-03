@@ -300,12 +300,24 @@ namespace EpicLoot
             public ValueDef Mythic;
         }
 
+        [Serializable]
+        public class ValuesPerItemNameDef
+        {
+            public List<string> ItemNames = new List<string>();
+            public ValuesPerRarityDef ValuesPerRarity = new ValuesPerRarityDef();
+            public ValuesPerRarityDef ValuesPerRarityExceptional = new ValuesPerRarityDef();
+            public ValuesPerRarityDef ValuesPerRarityElite = new ValuesPerRarityDef();
+        }
+
         public string Type { get; set; }
 
         public string DisplayText = "";
         public string Description = "";
         public MagicItemEffectRequirements Requirements = new MagicItemEffectRequirements();
         public ValuesPerRarityDef ValuesPerRarity = new ValuesPerRarityDef();
+        public ValuesPerRarityDef ValuesPerRarityExceptional = new ValuesPerRarityDef();
+        public ValuesPerRarityDef ValuesPerRarityElite = new ValuesPerRarityDef();
+        public List<ValuesPerItemNameDef> ValuesPerItemName = new List<ValuesPerItemNameDef>();
         public float SelectionWeight = 1;
         public bool CanBeAugmented = true;
         public bool CanBeDisenchanted = true;
@@ -336,20 +348,51 @@ namespace EpicLoot
             return ValuesPerRarity.Magic != null && ValuesPerRarity.Epic != null && ValuesPerRarity.Rare != null && ValuesPerRarity.Legendary != null;
         }
 
-        public ValueDef GetValuesForRarity(ItemRarity itemRarity)
+        public ValueDef GetValuesForRarity(ItemRarity itemRarity, string itemName, ItemQuality quality)
         {
-            switch (itemRarity)
+            ValueDef ValueForQuality(ValueDef normal, ValueDef exceptional, ValueDef elite)
             {
-                case ItemRarity.Magic:      return ValuesPerRarity.Magic;
-                case ItemRarity.Rare:       return ValuesPerRarity.Rare;
-                case ItemRarity.Epic:       return ValuesPerRarity.Epic;
-                case ItemRarity.Legendary:  return ValuesPerRarity.Legendary;
-                case ItemRarity.Mythic:
-                    // TODO: Mythic Hookup
-                    return null;//ValuesPerRarity.Mythic;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(itemRarity), itemRarity, null);
+                if (quality == ItemQuality.Elite && elite != null)
+                {
+                    return elite;
+                }
+                if (quality == ItemQuality.Exceptional && exceptional != null)
+                {
+                    return exceptional;
+                }
+                return normal;
             }
+
+            ValueDef ValueForRarity(ValuesPerRarityDef normal, ValuesPerRarityDef exceptional, ValuesPerRarityDef elite)
+            {
+                switch (itemRarity)
+                {
+                    case ItemRarity.Magic: return ValueForQuality(normal?.Magic, exceptional?.Magic, elite?.Magic);
+                    case ItemRarity.Rare: return ValueForQuality(normal?.Rare, exceptional?.Rare, elite?.Rare);
+                    case ItemRarity.Epic: return ValueForQuality(normal?.Epic, exceptional?.Epic, elite?.Epic);
+                    case ItemRarity.Legendary: return ValueForQuality(normal?.Legendary, exceptional?.Legendary, elite?.Legendary);
+                    case ItemRarity.Mythic:
+                        // TODO: Mythic Hookup
+                        return null;//ValuesPerRarity.Mythic;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(itemRarity), itemRarity, null);
+                }
+            }
+
+            if (string.IsNullOrEmpty(itemName) || ValuesPerItemName == null)
+            {
+                return ValueForRarity(ValuesPerRarity, ValuesPerRarityExceptional, ValuesPerRarityElite);
+            }
+
+            for (var i = 0; i < ValuesPerItemName.Count; i++)
+            {
+                if (ValuesPerItemName[i].ItemNames.Contains(itemName))
+                {
+                    return ValueForRarity(ValuesPerItemName[i].ValuesPerRarity, ValuesPerItemName[i].ValuesPerRarityExceptional, ValuesPerItemName[i].ValuesPerRarityElite);
+                }
+            }
+
+            return ValueForRarity(ValuesPerRarity, ValuesPerRarityExceptional, ValuesPerRarityElite);
         }
     }
 
@@ -426,7 +469,7 @@ namespace EpicLoot
                 return false;
             }
 
-            return effectDef.GetValuesForRarity(rarity) == null;
+            return effectDef.GetValuesForRarity(rarity, null, ItemQuality.Normal) == null;
         }
     }
 }
