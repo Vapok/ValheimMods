@@ -5,7 +5,7 @@
     //   "Name": "Magic loot filter", - name of the filter for the reference
     //   "Whitelist": false, - if set to true, the filter works in the opposite way, that is, the matching item will be dropped even if should be filtered out by other loot filters
     //   "DropMaterials": true, - if set to true, the item materials will be dropped instead of the item itself, if set to false, there will be no drop at all
-    //   "Items": [], - list of any "Name" fields from loottables.json
+    //   "Items": [], - list of item names (check "Item" fields used in loottables.json)
     //   "Rarities" : [
     //     "Magic",
     //     "Rare",
@@ -18,8 +18,7 @@
     //     "Elite"
     //   ],
     //   "Distance": 0, - minimal distance from the center of the world for the filter to be applied
-    //   "Day": 0, - minimal day in the world for the filter to be applied
-    //   "ApplyToChests": true - if set to true, chests items also affected
+    //   "Day": 0, - minimal day in the world for the filter to be applied, NOT IMPLEMENTED YET
     // }
     {
       "Name": "Tier0Everything - Normal",
@@ -35,7 +34,7 @@
         "ShieldWood",
         "ShieldWoodTower"
       ],
-      "Rarities" : [
+      "Rarities": [
         "Magic",
         "Rare",
         "Epic"
@@ -43,8 +42,7 @@
       "Quality": [
         "Normal"
       ],
-      "Distance": 3500,
-      "ApplyToChests": true
+      "Distance": 3500
     },
     {
       "Name": "Tier1Everything - Normal",
@@ -61,7 +59,7 @@
         "PickaxeAntler",
         "ShieldBoneTower"
       ],
-      "Rarities" : [
+      "Rarities": [
         "Magic",
         "Rare",
         "Epic"
@@ -69,8 +67,7 @@
       "Quality": [
         "Normal"
       ],
-      "Distance": 3500,
-      "ApplyToChests": true
+      "Distance": 3500
     },
     {
       "Name": "Tier2Everything - Normal",
@@ -97,7 +94,7 @@
         "PickaxeBronze",
         "Cultivator"
       ],
-      "Rarities" : [
+      "Rarities": [
         "Magic",
         "Rare",
         "Epic"
@@ -105,8 +102,7 @@
       "Quality": [
         "Normal"
       ],
-      "Distance": 5000,
-      "ApplyToChests": true
+      "Distance": 5000
     }
   ]
 }
