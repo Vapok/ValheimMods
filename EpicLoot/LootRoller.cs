@@ -552,11 +552,11 @@ namespace EpicLoot
                     }
 
                     List<GuaranteedMagicEffect> guaranteedMagicEffects;
-                    if (quality == ItemQuality.Elite && legendary.GuaranteedMagicEffectsElite != null)
+                    if (quality == ItemQuality.Elite && legendary.GuaranteedMagicEffectsElite.Count() > 0)
                     {
                         guaranteedMagicEffects = legendary.GuaranteedMagicEffectsElite;
                     }
-                    else if (quality == ItemQuality.Exceptional && legendary.GuaranteedMagicEffectsExceptional != null)
+                    else if (quality == ItemQuality.Exceptional && legendary.GuaranteedMagicEffectsExceptional.Count() > 0)
                     {
                         guaranteedMagicEffects = legendary.GuaranteedMagicEffectsExceptional;
                     }
