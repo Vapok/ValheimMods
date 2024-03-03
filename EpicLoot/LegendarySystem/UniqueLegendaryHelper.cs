@@ -75,14 +75,14 @@ namespace EpicLoot.LegendarySystem
             {
                 if (quality == ItemQuality.Elite)
                 {
-                    if (legendaryInfo.GuaranteedMagicEffectsElite.TryFind(x => x.Type == effectType, out var guaranteedMagicEffectElite))
+                    if (legendaryInfo.GuaranteedMagicEffectsElite.Count() > 0 && legendaryInfo.GuaranteedMagicEffectsElite.TryFind(x => x.Type == effectType, out var guaranteedMagicEffectElite))
                     {
                         return guaranteedMagicEffectElite.Values;
                     }
                 }
                 else if (quality == ItemQuality.Exceptional)
                 {
-                    if (legendaryInfo.GuaranteedMagicEffectsExceptional.TryFind(x => x.Type == effectType, out var guaranteedMagicEffectExceptional))
+                    if (legendaryInfo.GuaranteedMagicEffectsExceptional.Count() > 0 && legendaryInfo.GuaranteedMagicEffectsExceptional.TryFind(x => x.Type == effectType, out var guaranteedMagicEffectExceptional))
                     {
                         return guaranteedMagicEffectExceptional.Values;
                     }
