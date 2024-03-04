@@ -488,7 +488,32 @@ namespace EpicLoot
                 else
                 {
                     var setInfo = item.GetLegendarySetInfo();
-                    foreach (var setBonusInfo in setInfo.SetBonuses.OrderBy(x => x.Count))
+                    var count = currentSetEquipped.Count;
+                    ItemQuality minQuality = ItemQuality.Elite;
+                    foreach (var piece in currentSetEquipped)
+                    {
+                        var quality = piece.GetMagicItem().Quality;
+                        if (quality < minQuality)
+                        {
+                            minQuality = quality;
+                        }
+                    }
+
+                    List<SetBonusInfo> setBonuses;
+                    if (minQuality == ItemQuality.Elite && setInfo.SetBonusesElite.Count() > 0)
+                    {
+                        setBonuses = setInfo.SetBonusesElite;
+                    }
+                    else if (minQuality == ItemQuality.Exceptional && setInfo.SetBonusesExceptional.Count() > 0)
+                    {
+                        setBonuses = setInfo.SetBonusesExceptional;
+                    }
+                    else
+                    {
+                        setBonuses = setInfo.SetBonuses;
+                    }
+
+                    foreach (var setBonusInfo in setBonuses.OrderBy(x => x.Count))
                     {
                         var hasEquipped = currentSetEquipped.Count >= setBonusInfo.Count;
                         var effectDef = MagicItemEffectDefinitions.Get(setBonusInfo.Effect.Type);
@@ -642,8 +667,33 @@ namespace EpicLoot
             var equippedSets = player.GetEquippedSets();
             foreach (var setInfo in equippedSets)
             {
-                var count = player.GetEquippedSetPieces(setInfo.ID).Count;
-                foreach (var setBonusInfo in setInfo.SetBonuses)
+                var equippedSetPieces = player.GetEquippedSetPieces(setInfo.ID);
+                var count = equippedSetPieces.Count;
+                ItemQuality minQuality = ItemQuality.Elite;
+                foreach(var piece in equippedSetPieces)
+                {
+                    var quality = piece.GetMagicItem().Quality;
+                    if(quality < minQuality)
+                    {
+                        minQuality = quality;
+                    }
+                }
+
+                List<SetBonusInfo> setBonuses;
+                if(minQuality == ItemQuality.Elite && setInfo.SetBonusesElite.Count() > 0)
+                {
+                    setBonuses = setInfo.SetBonusesElite;
+                }
+                else if(minQuality == ItemQuality.Exceptional && setInfo.SetBonusesExceptional.Count() > 0)
+                {
+                    setBonuses = setInfo.SetBonusesExceptional;
+                }
+                else
+                {
+                    setBonuses = setInfo.SetBonuses;
+                }
+
+                foreach (var setBonusInfo in setBonuses)
                 {
                     if (count >= setBonusInfo.Count && (effectType == null || setBonusInfo.Effect.Type == effectType))
                     {
