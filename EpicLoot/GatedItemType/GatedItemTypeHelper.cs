@@ -52,9 +52,9 @@ namespace EpicLoot.GatedItemType
             }
         }
 
-        public static string GetGatedItemID(string itemID)
+        public static string GetGatedItemID(string itemID, List<string> itemDropLimitsExceptions = null)
         {
-            return GetGatedItemID(itemID, EpicLoot.GetGatedItemTypeMode());
+            return GetGatedItemID(itemID, EpicLoot.GetGatedItemTypeMode(), null, itemDropLimitsExceptions);
         }
 
         public static string GetGatedFallbackItem(string infoType, GatedItemTypeMode mode, string originalItemID, List<string> usedTypes = null)
@@ -80,12 +80,17 @@ namespace EpicLoot.GatedItemType
             return returnItem;
         }
 
-        public static string GetGatedItemID(string itemID, GatedItemTypeMode mode, List<string> usedTypes = null)
+        public static string GetGatedItemID(string itemID, GatedItemTypeMode mode, List<string> usedTypes = null, List<string> itemDropLimitsExceptions = null)
         {
             if (string.IsNullOrEmpty(itemID))
             {
                 EpicLoot.LogError($"Tried to get gated itemID with null or empty itemID!");
                 return null;
+            }
+
+            if(EpicLoot.AllowItemDropLimitsExceptions.Value && itemDropLimitsExceptions != null && itemDropLimitsExceptions.Contains(itemID))
+            {
+                return itemID;
             }
 
             if (mode == GatedItemTypeMode.Unlimited)
@@ -97,12 +102,6 @@ namespace EpicLoot.GatedItemType
             {
                 EpicLoot.LogError($"Tried to get gated itemID ({itemID}) but ObjectDB is not initialized!");
                 return null;
-            }
-
-            //Gets Info Item for specific itemId
-            if (!ItemInfoByID.TryGetValue(itemID, out var info))
-            {
-                return itemID;
             }
             
             var itemName = GetItemName(itemID);
