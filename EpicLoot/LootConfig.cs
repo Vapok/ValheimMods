@@ -57,5 +57,6 @@ namespace EpicLoot
         public LootItemSet[] ItemSets;
         public LootTable[] LootTables;
         public List<string> RestrictedItems = new List<string>();
+        public List<string> ItemDropLimitsExceptions = new List<string>();
     }
 }
