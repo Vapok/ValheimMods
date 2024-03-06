@@ -126,6 +126,9 @@ namespace EpicLoot
             var magicParry = magicItem.HasEffect(MagicEffectType.ModifyParry);
             var totalParryBonusMod = magicItem.GetTotalEffectValue(MagicEffectType.ModifyParry, 0.01f);
             var magicParryColor = magicParry ? magicColor : "orange";
+            var magicParryForce = magicItem.HasEffect(MagicEffectType.ModifyParryForce);
+            var magicParryForceColor = magicParryForce ? magicColor : "orange";
+            var deflectionForce = item.GetDeflectionForce(qualityLevel);
             switch (item.m_shared.m_itemType)
             {
                 case ItemDrop.ItemData.ItemType.Consumable:
@@ -172,10 +175,12 @@ namespace EpicLoot
                     var blockPowerTooltipValue = item.GetBlockPowerTooltip(qualityLevel);
                     var blockPowerPercentageString = blockPowerTooltipValue.ToString("0");
                     text.Append($"\n$item_blockpower: <color={magicBlockColor1}>{baseBlockPower1}</color> <color={magicBlockColor2}>({blockPowerPercentageString})</color>");
+                    if (deflectionForce > 0)
+                    {
+                        text.Append($"\n$item_deflection: <color={magicParryForceColor}>{deflectionForce}</color>");
+                    }
                     if (item.m_shared.m_timedBlockBonus > 1.0)
                     {
-                        text.Append($"\n$item_deflection: <color={magicParryColor}>{item.GetDeflectionForce(qualityLevel)}</color>");
-
                         var timedBlockBonus = item.m_shared.m_timedBlockBonus;
                         if (magicParry)
                         {
@@ -214,10 +219,12 @@ namespace EpicLoot
                     blockPowerTooltipValue = item.GetBlockPowerTooltip(qualityLevel);
                     var str5 = blockPowerTooltipValue.ToString("0");
                     text.Append($"\n$item_blockpower: <color={magicBlockColor1}>{baseBlockPower2}</color> <color={magicBlockColor2}>({str5})</color>");
+                    if (deflectionForce > 0)
+                    {
+                        text.Append($"\n$item_deflection: <color={magicParryForceColor}>{deflectionForce}</color>");
+                    }
                     if (item.m_shared.m_timedBlockBonus > 1.0)
                     {
-                        text.Append($"\n$item_deflection: <color={magicParryColor}>{item.GetDeflectionForce(qualityLevel)}</color>");
-
                         var timedBlockBonus = item.m_shared.m_timedBlockBonus;
                         if (magicParry)
                         {
@@ -559,7 +566,7 @@ namespace EpicLoot
                         break;
 
                     case "$item_deflection":
-                        if (magicItem.HasEffect(MagicEffectType.ModifyParry))
+                        if (magicItem.HasEffect(MagicEffectType.ModifyParryForce))
                         {
                             value = $"<color={magicColor}>{item.GetDeflectionForce(item.m_quality)}</color>";
                         }
