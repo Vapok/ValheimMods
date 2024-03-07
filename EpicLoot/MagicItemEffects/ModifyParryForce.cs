@@ -18,7 +18,7 @@ namespace EpicLoot.MagicItemEffects
 
             if (player != null && player.m_leftItem == null && MagicEffectsHelper.HasActiveMagicEffect(player, __instance, MagicEffectType.Duelist))
 			{
-                totalParryForceMod += MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.Duelist, 0.01f);
+                totalParryForceMod += MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.Duelist, 0.01f) / 2.0f;
 			}
 
             __result *= 1.0f + totalParryForceMod;
