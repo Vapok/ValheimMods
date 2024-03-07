@@ -323,6 +323,38 @@
       ]
     },
     {
+      "Type" : "ModifyParryForce",
+      "DisplayText" : "$mod_epicloot_me_modifyparryforce_display",
+      "Description" : "$mod_epicloot_me_modifyparryforce_desc",
+      "Requirements" : {
+        "AllowedItemTypes" : [
+          "Shield",
+          "TwoHandedWeapon"
+        ],
+        "ExcludedSkillTypes": [
+          "Pickaxes"
+        ],
+        "ExcludedItemNames": [
+          "$item_shield_serpentscale"
+        ],
+        "ItemHasParryPower" : true
+      },
+      "ValuesPerRarity" : {
+        "Magic" : { "MinValue" : 10, "MaxValue" : 20, "Increment" : 1 },
+        "Rare" : { "MinValue" : 10, "MaxValue" : 20, "Increment" : 1 },
+        "Epic" : { "MinValue" : 10, "MaxValue" : 20, "Increment" : 1 },
+        "Legendary" : { "MinValue" : 15, "MaxValue" : 25, "Increment" : 1 }
+      },
+      "SelectionWeight" : 1,
+      "Prefixes": [
+        "$mod_epicloot_me_modifyparryforce_prefix1",
+        "$mod_epicloot_me_modifyparryforce_prefix2"
+      ],
+      "Suffixes": [
+        "$mod_epicloot_me_modifyparryforce_suffix1"
+      ]
+    },
+    {
       "Type" : "ModifyArmor",
       "DisplayText" : "$mod_epicloot_me_modifyarmor_display",
       "Description" : "$mod_epicloot_me_modifyarmor_desc",

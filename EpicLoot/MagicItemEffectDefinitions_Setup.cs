@@ -17,6 +17,7 @@ namespace EpicLoot
         public static string RemoveSpeedPenalty = nameof(RemoveSpeedPenalty);
         public static string ModifyBlockPower = nameof(ModifyBlockPower);
         public static string ModifyParry = nameof(ModifyParry);
+        public static string ModifyParryForce = nameof(ModifyParryForce);
         public static string ModifyArmor = nameof(ModifyArmor);
         public static string ModifyBackstab = nameof(ModifyBackstab);
         public static string IncreaseHealth = nameof(IncreaseHealth);
