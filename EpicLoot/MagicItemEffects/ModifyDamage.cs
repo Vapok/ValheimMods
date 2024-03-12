@@ -31,18 +31,18 @@ namespace EpicLoot.MagicItemEffects
             var player = PlayerExtensions.GetPlayerWithEquippedItem(__instance);
 
             // Add damages first
-            __result.m_blunt        += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddBluntDamage);
-            __result.m_slash        += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddSlashingDamage);
-            __result.m_pierce       += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddPiercingDamage);
-            __result.m_fire         += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddFireDamage);
-            __result.m_frost        += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddFrostDamage);
-            __result.m_lightning    += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddLightningDamage);
-            __result.m_poison       += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddPoisonDamage);
-            __result.m_spirit       += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddSpiritDamage);
+            __result.m_blunt        += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddBluntDamage, 1.0f, true);
+            __result.m_slash        += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddSlashingDamage, 1.0f, true);
+            __result.m_pierce       += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddPiercingDamage, 1.0f, true);
+            __result.m_fire         += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddFireDamage, 1.0f, true);
+            __result.m_frost        += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddFrostDamage, 1.0f, true);
+            __result.m_lightning    += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddLightningDamage, 1.0f, true);
+            __result.m_poison       += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddPoisonDamage, 1.0f, true);
+            __result.m_spirit       += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddSpiritDamage, 1.0f, true);
             
             if (magicItemskillType == Skills.SkillType.Axes)
             {
-                __result.m_chop += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddSlashingDamage);
+                __result.m_chop += totalDamage * MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, __instance, MagicEffectType.AddSlashingDamage, 1.0f, true);
             }
             else if (magicItemskillType == Skills.SkillType.Pickaxes)
             {

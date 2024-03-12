@@ -71,7 +71,7 @@ namespace EpicLoot.MagicItemEffects
         {
             float totalMagicEffect;
             if (Attack_Patch.ActiveAttack != null)
-                totalMagicEffect = MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, Attack_Patch.ActiveAttack.m_weapon, MagicEffectType.Executioner, 0.01f);
+                totalMagicEffect = MagicEffectsHelper.GetTotalActiveMagicEffectValueForWeapon(player, Attack_Patch.ActiveAttack.m_weapon, MagicEffectType.Executioner, 0.01f, true);
             else
                 totalMagicEffect = player.GetTotalActiveMagicEffectValue(MagicEffectType.Executioner, 0.01f);
             return 1 + totalMagicEffect;
