@@ -41,20 +41,34 @@ namespace EpicLoot.MagicItemEffects
             }
         }
 
-        private static ItemDrop.ItemData GetIgnoreWeapon(Player player, ItemDrop.ItemData equippedWeapon)
+        private static bool IsTorch(ItemDrop.ItemData itemData)
         {
-            if (player.m_rightItem == equippedWeapon && IsWeapon(player.m_leftItem))
+            if (itemData == null)
+                return false;
+
+            switch (itemData.m_shared.m_itemType)
+            {
+                case ItemDrop.ItemData.ItemType.Torch:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static ItemDrop.ItemData GetIgnoreWeapon(Player player, ItemDrop.ItemData equippedWeapon, bool excludeTorch = false)
+        {
+            if (player.m_rightItem == equippedWeapon && IsWeapon(player.m_leftItem) && (!excludeTorch || !IsTorch(player.m_leftItem)))
                 return player.m_leftItem;
-            if (player.m_leftItem == equippedWeapon && IsWeapon(player.m_rightItem))
+            if (player.m_leftItem == equippedWeapon && IsWeapon(player.m_rightItem) && (!excludeTorch || !IsTorch(player.m_rightItem)))
                 return player.m_rightItem;
 
             return null;
         }
 
-        public static float GetTotalActiveMagicEffectValueForWeapon(Player player, ItemDrop.ItemData itemData, string effectType, float scale = 1.0f)
+        public static float GetTotalActiveMagicEffectValueForWeapon(Player player, ItemDrop.ItemData itemData, string effectType, float scale = 1.0f, bool addOffhandTorchEffects = false)
         {
             if (player != null)
-                return player.GetTotalActiveMagicEffectValue(effectType, scale, GetIgnoreWeapon(player, itemData));
+                return player.GetTotalActiveMagicEffectValue(effectType, scale, GetIgnoreWeapon(player, itemData, addOffhandTorchEffects));
             if (itemData.IsMagic(out var magicItem))
                 return magicItem.GetTotalEffectValue(effectType, scale);
             return 0;
