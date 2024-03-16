@@ -478,7 +478,7 @@ namespace EpicLoot
 
             var magicItem = new MagicItem { Rarity = rarity, Quality = quality, ItemName = baseItem.m_shared.m_name };
 
-            var effectCount = CheatEffectCount >= 1 ? CheatEffectCount : RollEffectCountPerRarity(magicItem.Rarity);
+            var effectCount = CheatEffectCount >= 1 ? CheatEffectCount : RollEffectCountPerRarity(magicItem.Rarity, magicItem.Quality);
 
             if (rarity == ItemRarity.Legendary)
             {
@@ -579,34 +579,49 @@ namespace EpicLoot
             }
         }
 
-        public static int RollEffectCountPerRarity(ItemRarity rarity)
+        public static int RollEffectCountPerRarity(ItemRarity rarity, ItemQuality quality)
         {
-            var countPercents = GetEffectCountsPerRarity(rarity, true);
+            var countPercents = GetEffectCountsPerRarity(rarity, quality, true);
             _weightedEffectCountTable.Setup(countPercents, x => x.Value);
             return _weightedEffectCountTable.Roll().Key;
         }
 
-        public static List<KeyValuePair<int, float>> GetEffectCountsPerRarity(ItemRarity rarity, bool useEnchantingUpgrades)
+        public static List<KeyValuePair<int, float>> GetEffectCountsPerRarity(ItemRarity rarity, ItemQuality quality, bool useEnchantingUpgrades)
         {
+            MagicEffectsCountConfig config;
+            switch(quality)
+            {
+                case ItemQuality.Elite:
+                    config = Config.MagicEffectsCountElite;
+                    break;
+                case ItemQuality.Exceptional:
+                    config = Config.MagicEffectsCountExceptional;
+                    break;
+                default:
+                case ItemQuality.Normal:
+                    config = Config.MagicEffectsCount;
+                    break;
+            }
+
             List<KeyValuePair<int, float>> result;
             switch (rarity)
             {
                 case ItemRarity.Magic:
-                    result = Config.MagicEffectsCount.Magic.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
+                    result = config.Magic.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
                     break;
                 case ItemRarity.Rare:
-                    result = Config.MagicEffectsCount.Rare.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
+                    result = config.Rare.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
                     break;
                 case ItemRarity.Epic:
-                    result = Config.MagicEffectsCount.Epic.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
+                    result = config.Epic.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
                     break;
                 case ItemRarity.Legendary:
-                    result = Config.MagicEffectsCount.Legendary.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
+                    result = config.Legendary.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
                     break;
 
                 case ItemRarity.Mythic:
                     // TODO: Mythic Hookup
-                    return new List<KeyValuePair<int, float>>();//Config.MagicEffectsCount.Mythic.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
+                    return new List<KeyValuePair<int, float>>();//config.Mythic.Select(x => new KeyValuePair<int, float>((int)x[0], x[1])).ToList();
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(rarity), rarity, null);

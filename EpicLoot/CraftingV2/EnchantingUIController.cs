@@ -358,7 +358,7 @@ namespace EpicLoot.CraftingV2
             var highValueBonus = float.IsNaN(featureValues.Item1) ? 0 : featureValues.Item1;
             var midValueBonus = float.IsNaN(featureValues.Item2) ? 0 : featureValues.Item2;
 
-            var effectCountWeights = LootRoller.GetEffectCountsPerRarity(rarity, true);
+            var effectCountWeights = LootRoller.GetEffectCountsPerRarity(rarity, ItemQuality.Normal, true);
             float totalWeight = effectCountWeights.Sum(x => x.Value);
             for (var index = 0; index < effectCountWeights.Count; index++)
             {

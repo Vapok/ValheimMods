@@ -1567,7 +1567,7 @@ namespace EpicLoot
 
         private static string GetMagicEffectCountTableLine(ItemRarity rarity)
         {
-            var effectCounts = LootRoller.GetEffectCountsPerRarity(rarity, false);
+            var effectCounts = LootRoller.GetEffectCountsPerRarity(rarity, ItemQuality.Normal, false);
             float total = effectCounts.Sum(x => x.Value);
             var result = $"|{rarity}|";
             for (var i = 1; i <= 6; ++i)
