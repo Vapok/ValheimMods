@@ -9,6 +9,7 @@ namespace EpicLoot
         public string Item;
         public float Weight = 1;
         public float[] Rarity;
+        public float[] Quality;
     }
 
     [Serializable]
@@ -54,6 +55,8 @@ namespace EpicLoot
     public class LootConfig
     {
         public MagicEffectsCountConfig MagicEffectsCount;
+        public MagicEffectsCountConfig MagicEffectsCountExceptional;
+        public MagicEffectsCountConfig MagicEffectsCountElite;
         public LootItemSet[] ItemSets;
         public LootTable[] LootTables;
         public List<string> RestrictedItems = new List<string>();
