@@ -15,7 +15,12 @@ namespace EpicLoot
                 return;
             }
 
-            __instance.m_inventory.RemoveAll();
+            var containerName = __instance.m_piece.name.Replace("(Clone)", "").Trim();
+            var lootTables = LootRoller.GetLootTable(containerName);
+            if (lootTables != null && lootTables.Count > 0)
+            {
+                __instance.m_inventory.RemoveAll();
+            }
         }
 
         public static void Postfix(Container __instance)
