@@ -55,7 +55,12 @@ namespace EpicLoot
 
             if (__instance.m_nview.IsOwner() && !__instance.m_nview.GetZDO().GetBool("EL_container_items_rolled".GetStableHashCode()))
             {
-                __instance.AddDefaultItems();
+                var containerName = __instance.m_piece.name.Replace("(Clone)", "").Trim();
+                var lootTables = LootRoller.GetLootTable(containerName);
+                if (lootTables != null && lootTables.Count > 0)
+                {
+                    __instance.AddDefaultItems();
+                }
                 __instance.m_nview.GetZDO().Set("EL_container_items_rolled".GetStableHashCode(), value: true);
             }
         }
@@ -73,7 +78,12 @@ namespace EpicLoot
 
             if (__instance.m_nview.IsOwner() && !__instance.m_nview.GetZDO().GetBool("EL_container_items_rolled".GetStableHashCode()))
             {
-                __instance.AddDefaultItems();
+                var containerName = __instance.m_piece.name.Replace("(Clone)", "").Trim();
+                var lootTables = LootRoller.GetLootTable(containerName);
+                if (lootTables != null && lootTables.Count > 0)
+                {
+                    __instance.AddDefaultItems();
+                }
                 __instance.m_nview.GetZDO().Set("EL_container_items_rolled".GetStableHashCode(), value: true);
             }
         }
